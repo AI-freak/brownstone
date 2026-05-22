@@ -1,0 +1,25 @@
+{
+  "name": "@brownstone/patching",
+  "version": "0.5.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@brownstone/contracts": "workspace:*",
+    "@brownstone/errors": "workspace:*",
+    "@brownstone/storage": "workspace:*",
+    "@brownstone/security": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

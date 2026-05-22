@@ -1,0 +1,19 @@
+{
+  "name": "@brownstone/app-task-worker",
+  "version": "0.5.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node --env-file=.env dist/index.js",
+    "dev": "tsx watch --env-file=.env src/index.ts"
+  },
+  "dependencies": {
+    "@brownstone/config": "workspace:*",
+    "@brownstone/task-executor": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "@types/node": "^20.11.0"
+  }
+}

@@ -1,0 +1,3331 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Brownstone</title>
+    <style>
+:root {
+  --bg-0: #030c14;
+  --bg-1: #06111b;
+  --panel: rgba(10, 23, 33, 0.78);
+  --panel-strong: rgba(10, 23, 33, 0.92);
+  --line: rgba(79, 248, 235, 0.18);
+  --line-strong: rgba(79, 248, 235, 0.45);
+  --glow: rgba(79, 248, 235, 0.35);
+  --text: #ebfdff;
+  --muted: #9ecfd6;
+  --muted-2: #6e9ca5;
+  --success: #6dfbd8;
+  --warning: #ffcf7c;
+  --danger: #ff8d8d;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.42), 0 0 28px rgba(79, 248, 235, 0.08);
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 18px;
+  --radius-sm: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(79, 248, 235, 0.18), transparent 24%),
+    radial-gradient(circle at 92% 2%, rgba(79, 248, 235, 0.12), transparent 20%),
+    linear-gradient(180deg, var(--bg-0), var(--bg-1) 55%, #031019);
+  color: var(--text);
+}
+
+body {
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(79, 248, 235, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 248, 235, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(circle at center, black, transparent 90%);
+  pointer-events: none;
+}
+
+.app-shell {
+  width: min(1600px, calc(100% - 48px));
+  margin: 24px auto 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.glass {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(22px);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px;
+  border-radius: var(--radius-xl);
+  margin-bottom: 20px;
+}
+
+.eyebrow,
+.panel-eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  color: var(--muted-2);
+}
+
+.topbar h1,
+.panel-header h2,
+.preview-empty h3,
+.section-title-row h3 {
+  margin: 6px 0 0;
+}
+
+.topbar h1 {
+  font-size: clamp(24px, 2.6vw, 42px);
+}
+
+.topbar-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.workspace-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr 1.05fr;
+  gap: 18px;
+  min-height: calc(100vh - 190px);
+}
+
+.panel {
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.panel-header,
+.section-title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+
+.mode-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0 6px;
+}
+
+.mode-button {
+  border-radius: 18px;
+  padding: 12px 14px;
+  text-align: left;
+  background: rgba(10, 21, 31, 0.72);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.mode-button:hover,
+.mode-button.active {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: 0 0 0 1px rgba(79, 248, 235, 0.18), 0 0 28px rgba(79, 248, 235, 0.1);
+}
+
+.mode-button-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.mode-button-description {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted-2);
+  margin-bottom: 6px;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.template-card,
+.status-card,
+.inset-card,
+.composer,
+.message-bubble,
+.pill,
+.small-pill,
+.tab-button,
+.primary-button,
+.secondary-button,
+.ghost-button,
+.clarification-card,
+.file-node,
+.activity-item,
+.memory-item {
+  border: 1px solid var(--line);
+}
+
+.template-card,
+.status-card,
+.inset-card,
+.composer,
+.clarification-card,
+.message-bubble,
+.file-node,
+.activity-item,
+.memory-item {
+  background: rgba(10, 21, 31, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+.template-card {
+  border-radius: 20px;
+  padding: 14px 14px 12px;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.template-card:hover,
+.template-card.active {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: 0 0 0 1px rgba(79, 248, 235, 0.18), 0 0 28px rgba(79, 248, 235, 0.1);
+}
+
+.template-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: linear-gradient(180deg, rgba(79, 248, 235, 0.24), rgba(79, 248, 235, 0.04));
+  color: var(--text);
+}
+
+.template-title {
+  font-weight: 700;
+}
+
+.template-description,
+.file-node small,
+.memory-item p,
+.activity-item p,
+.status-card p,
+.preview-empty p,
+#approval-summary-text,
+.safe-default-item span,
+.message-bubble p {
+  color: var(--muted);
+}
+
+.message-stream {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+  min-height: 240px;
+}
+
+.message-bubble {
+  border-radius: 22px;
+  padding: 14px 16px;
+  line-height: 1.65;
+}
+
+.message-bubble.user {
+  align-self: flex-end;
+  max-width: 88%;
+  background: linear-gradient(180deg, rgba(79, 248, 235, 0.18), rgba(13, 31, 39, 0.74));
+}
+
+.message-bubble.assistant {
+  align-self: flex-start;
+  max-width: 92%;
+}
+
+.message-meta {
+  font-size: 12px;
+  color: var(--muted-2);
+  margin-bottom: 6px;
+}
+
+.composer {
+  margin-top: 14px;
+  border-radius: 24px;
+  padding: 14px;
+}
+
+textarea,
+input,
+select {
+  width: 100%;
+  background: rgba(2, 10, 16, 0.7);
+  color: var(--text);
+  border: 1px solid rgba(79, 248, 235, 0.12);
+  border-radius: 14px;
+  font: inherit;
+}
+
+textarea {
+  min-height: 118px;
+  resize: vertical;
+  padding: 14px 16px;
+}
+
+input,
+select {
+  padding: 12px 14px;
+}
+
+.composer-footer,
+.clarification-actions,
+.approval-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.suggestions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pill,
+.small-pill,
+.ghost-button,
+.primary-button,
+.secondary-button,
+.tab-button {
+  appearance: none;
+  background: rgba(5, 18, 28, 0.72);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: border-color 120ms ease, transform 120ms ease, background 120ms ease;
+}
+
+.pill,
+.small-pill {
+  cursor: default;
+}
+
+.small-pill {
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.primary-button {
+  background: linear-gradient(90deg, rgba(79, 248, 235, 0.32), rgba(79, 248, 235, 0.16));
+}
+
+.secondary-button {
+  background: rgba(255, 207, 124, 0.1);
+  border-color: rgba(255, 207, 124, 0.2);
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.ghost-button:hover,
+.tab-button:hover {
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
+}
+
+.status-grid,
+.subgrid {
+  display: grid;
+  gap: 12px;
+}
+
+.status-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 18px 0 12px;
+}
+
+.subgrid {
+  grid-template-columns: 1fr;
+}
+
+.status-card,
+.inset-card {
+  border-radius: 22px;
+  padding: 16px;
+}
+
+.status-card h3,
+.inset-card h3,
+.file-node strong,
+.memory-item strong,
+.activity-item strong {
+  margin: 0;
+  font-size: 15px;
+}
+
+.status-value {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.safe-default-item,
+.activity-item,
+.memory-item,
+.file-node {
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.safe-default-item + .safe-default-item,
+.file-node + .file-node,
+.activity-item + .activity-item,
+.memory-item + .memory-item {
+  margin-top: 10px;
+}
+
+.file-tree,
+.activity-feed,
+.memory-list {
+  overflow: auto;
+  max-height: 260px;
+  padding-right: 4px;
+}
+
+.file-node {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.file-node.dir {
+  border-style: dashed;
+}
+
+.file-node.active {
+  border-color: var(--line-strong);
+  box-shadow: 0 0 0 1px rgba(79, 248, 235, 0.18);
+}
+
+.activity-item time,
+.memory-item time,
+.message-meta time {
+  display: block;
+  color: var(--muted-2);
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.tab-row {
+  display: flex;
+  gap: 8px;
+}
+
+.tab-button.active {
+  background: linear-gradient(90deg, rgba(79, 248, 235, 0.28), rgba(79, 248, 235, 0.14));
+}
+
+.preview-stack,
+.preview-surface {
+  flex: 1;
+  min-height: 0;
+}
+
+.preview-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-surface {
+  display: none;
+  border-radius: 24px;
+  padding: 16px;
+  min-height: 0;
+}
+
+.preview-surface.active {
+  display: block;
+}
+
+.preview-empty {
+  display: grid;
+  place-content: center;
+  min-height: 420px;
+  text-align: center;
+  color: var(--muted);
+}
+
+#web-preview-frame,
+#text-preview,
+.before-after-grid pre {
+  width: 100%;
+  min-height: 420px;
+  border: 1px solid rgba(79, 248, 235, 0.12);
+  border-radius: 18px;
+  background: rgba(3, 10, 16, 0.92);
+}
+
+#web-preview-frame {
+  height: 520px;
+  background: white;
+}
+
+#text-preview,
+.before-after-grid pre {
+  margin: 0;
+  padding: 16px;
+  overflow: auto;
+  color: #dbf8fb;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.approval-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.before-after-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.clarification-card {
+  border-radius: 22px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.clarification-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field-help {
+  font-size: 12px;
+  color: var(--muted-2);
+  margin-top: 6px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 1320px) {
+  .workspace-layout {
+    grid-template-columns: 1fr;
+    overflow: auto;
+    max-height: calc(100vh - 190px);
+  }
+
+  body {
+    overflow: auto;
+  }
+
+  .status-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mode-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mode-select,
+.inline-comment-form input,
+.inline-comment-form textarea,
+#approval-note {
+  border-radius: 12px;
+  border: 1px solid rgba(79, 248, 235, 0.16);
+  background: rgba(7, 18, 28, 0.72);
+  color: var(--text);
+  padding: 10px 12px;
+}
+
+.composer-extended {
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.composer-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.inline-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#upload-input {
+  max-width: 180px;
+  color: var(--muted);
+}
+
+.subgrid-extended {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 120px;
+}
+
+.data-card,
+.empty-mini {
+  border-radius: 18px;
+  border: 1px solid rgba(79, 248, 235, 0.1);
+  background: rgba(4, 12, 18, 0.75);
+  padding: 12px;
+}
+
+.data-card {
+  cursor: pointer;
+}
+
+.data-card p,
+.data-card small,
+.empty-mini {
+  color: var(--muted);
+}
+
+.data-card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.ghost-link {
+  background: transparent;
+  color: var(--teal);
+  border: 0;
+  cursor: pointer;
+}
+
+.comments-panel {
+  margin-top: 18px;
+}
+
+.inline-comment-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.comment-wrap {
+  margin-top: 14px;
+}
+
+@media (max-width: 1320px) {
+  .subgrid-extended {
+    grid-template-columns: 1fr;
+  }
+
+  .inline-tools {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 1080px) {
+  .mode-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  .mode-strip { grid-template-columns: 1fr; }
+}
+
+/* ---------------- Pass 2 additions over the original design ---------------- */
+
+/* The HTML [hidden] attribute must beat element-specific display rules.
+   Without this, .auth-overlay's display:flex would override [hidden] and the
+   overlay would keep intercepting clicks after the user logged in. */
+[hidden] { display: none !important; }
+
+/* Login overlay matches the glass aesthetic of the rest of the app. */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 30% 0%, rgba(79, 248, 235, 0.18), transparent 35%),
+    rgba(2, 9, 16, 0.78);
+  backdrop-filter: blur(14px);
+  z-index: 200;
+  padding: 24px;
+}
+.auth-card {
+  width: min(440px, 100%);
+  padding: 32px;
+  border-radius: var(--radius-xl);
+}
+.auth-card h2 { margin: 6px 0 18px; font-size: 22px; }
+.auth-tabs { display: flex; gap: 6px; margin-bottom: 18px; }
+.auth-form { display: flex; flex-direction: column; gap: 10px; }
+.auth-form .field-label { margin-top: 6px; }
+.auth-form input {
+  background: rgba(10, 21, 31, 0.72);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 10px 12px;
+  font: inherit;
+}
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--line-strong);
+  box-shadow: 0 0 0 1px var(--glow);
+}
+.auth-form .primary-button { margin-top: 12px; }
+.auth-error {
+  color: var(--danger);
+  font-size: 12px;
+  min-height: 14px;
+}
+
+.user-pill {
+  background: rgba(79, 248, 235, 0.08);
+}
+
+.welcome-card {
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(10, 21, 31, 0.55);
+  border: 1px dashed var(--line);
+  margin-bottom: 12px;
+}
+.welcome-card p { margin: 6px 0 0; color: var(--muted); line-height: 1.55; }
+
+/* Header controls — session select + new-chat button */
+.header-controls { display: flex; gap: 8px; align-items: center; }
+#session-select { min-width: 180px; }
+
+/* Streaming chat: keep the original message-bubble layout but add states
+   for streaming + tool calls inline. */
+.message-bubble {
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin: 8px 0;
+  line-height: 1.55;
+}
+.message-bubble.user { background: rgba(79, 248, 235, 0.10); border-color: var(--line-strong); }
+.message-bubble.assistant { background: rgba(10, 21, 31, 0.65); }
+.message-bubble .message-meta {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted-2);
+  margin-bottom: 6px;
+}
+.message-bubble p { margin: 0; }
+
+/* Markdown rendering (same primitives chat.js produced in Pass 2) */
+.md-p { margin: 0 0 8px 0; }
+.md-p:last-child { margin-bottom: 0; }
+.md-h1, .md-h2, .md-h3 { margin: 14px 0 6px; }
+.md-h1 { font-size: 1.4em; }
+.md-h2 { font-size: 1.2em; }
+.md-h3 { font-size: 1.08em; }
+.md-list { padding-left: 22px; margin: 6px 0; }
+.md-list li { margin: 4px 0; }
+.md-quote {
+  border-left: 3px solid var(--line-strong);
+  padding: 4px 12px;
+  color: var(--muted);
+  margin: 8px 0;
+}
+.md-inline-code {
+  background: rgba(79, 248, 235, 0.10);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0 5px;
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 0.92em;
+}
+.md-code {
+  background: rgba(2, 12, 18, 0.92);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  overflow-x: auto;
+  margin: 10px 0;
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.md-code[data-lang]:before {
+  content: attr(data-lang);
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted-2);
+  margin-bottom: 6px;
+}
+.tok-keyword { color: #c792ea; }
+.tok-string  { color: #6dfbd8; }
+.tok-number  { color: #ffcf7c; }
+.tok-comment { color: #6e9ca5; font-style: italic; }
+
+/* Tool call panels */
+.tool-calls { margin-top: 10px; }
+.tool-call {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  margin: 6px 0;
+  background: rgba(2, 12, 18, 0.55);
+  overflow: hidden;
+}
+.tool-call summary {
+  cursor: pointer;
+  padding: 8px 12px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+}
+.tool-call summary::-webkit-details-marker { display: none; }
+.tool-indicator {
+  display: inline-block;
+  width: 18px;
+  text-align: center;
+  font-weight: 700;
+}
+.tool-call[data-status="running"] .tool-indicator {
+  color: var(--success);
+  animation: tool-pulse 1.4s ease-in-out infinite;
+}
+.tool-call[data-status="ok"] .tool-indicator { color: var(--success); }
+.tool-call[data-status="failed"] .tool-indicator { color: var(--danger); }
+.tool-name { color: var(--text); font-weight: 600; }
+.tool-duration { color: var(--muted-2); font-size: 11px; margin-left: auto; }
+.tool-io {
+  margin: 0;
+  padding: 10px 12px;
+  border-top: 1px solid var(--line);
+  background: rgba(2, 9, 16, 0.85);
+  font-size: 11px;
+  font-family: ui-monospace, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.tool-io strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted-2);
+  font-weight: 500;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+@keyframes tool-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* Approval token bar (bottom) */
+.approval-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  border-radius: 999px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 50;
+  max-width: min(680px, calc(100% - 32px));
+}
+.approval-bar input {
+  background: rgba(10, 21, 31, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 12px;
+  width: min(360px, 40vw);
+}
+.approval-bar input:focus {
+  outline: none;
+  border-color: var(--line-strong);
+}
+
+/* ---------------- Layout refinements ---------------- */
+
+/* Topbar shouldn't wrap individual pills */
+.topbar-meta { flex-wrap: wrap; }
+.topbar-meta .pill, .topbar-meta .small-pill { white-space: nowrap; }
+
+/* Chat panel: give the message stream most of the height */
+.chat-panel { display: flex; flex-direction: column; min-height: 0; }
+.message-stream {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 2px;
+  margin: 12px 0;
+}
+
+/* Safer-defaults two-column rows */
+.safety-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.safety-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 13px;
+}
+.safety-item:last-child { border-bottom: none; }
+.safety-item span { color: var(--muted-2); }
+.safety-item strong { color: var(--text); }
+
+/* Status grid: 3 evenly-spaced cards */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.status-card {
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+.status-card .small-pill { display: inline-block; }
+.status-card strong { display: block; margin-top: 6px; font-size: 15px; }
+.status-success strong { color: var(--success); }
+.status-warning strong { color: var(--warning); }
+
+/* Dashboard inset-cards in a 2-col grid */
+.subgrid-extended {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.subgrid-extended .inset-card {
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+.inset-card .section-title-row { margin-bottom: 10px; }
+.inset-card .section-title-row h3 { margin: 0; font-size: 13px; }
+
+/* File tree + simple lists */
+.file-node {
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  margin: 3px 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.empty-state {
+  color: var(--muted-2);
+  font-size: 12px;
+  font-style: italic;
+  padding: 6px 4px;
+}
+
+.activity-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+}
+.activity-item {
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.activity-item .muted { color: var(--muted-2); font-size: 11px; margin-left: auto; }
+
+/* Suggestions */
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.suggestion-pill {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  text-align: left;
+  max-width: 360px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Composer layout */
+.composer textarea {
+  background: rgba(2, 12, 18, 0.65);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 13.5px;
+  min-height: 70px;
+  resize: vertical;
+  width: 100%;
+}
+.composer textarea:focus { outline: none; border-color: var(--line-strong); }
+.composer-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+.composer-tools { flex: 1; min-width: 0; }
+.inline-tools { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Push composer above the floating approval bar */
+.chat-panel .composer { margin-bottom: 56px; }
+
+/* Approval bar tweaks */
+.approval-bar { bottom: 14px; }
+
+/* Preview empty card and surfaces */
+.preview-surface {
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-top: 10px;
+}
+.preview-surface { display: none; }
+.preview-surface.active { display: block; }
+.preview-empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--muted);
+}
+.preview-empty h3 { margin: 0 0 6px; }
+
+/* Tab buttons */
+.tab-button {
+  background: transparent;
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font: inherit;
+  font-size: 12px;
+}
+.tab-button.active {
+  background: rgba(79, 248, 235, 0.16);
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+.tab-row { display: flex; gap: 6px; }
+
+/* Primary / secondary / ghost buttons */
+.primary-button {
+  background: linear-gradient(180deg, rgba(79, 248, 235, 0.35), rgba(79, 248, 235, 0.15));
+  color: var(--text);
+  padding: 8px 18px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+.primary-button:hover { border-color: var(--line-strong); box-shadow: 0 0 0 1px var(--glow); }
+.primary-button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.ghost-button {
+  background: transparent;
+  color: var(--muted);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.ghost-button:hover { border-color: var(--line-strong); color: var(--text); }
+.ghost-button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.secondary-button {
+  background: rgba(255, 141, 141, 0.14);
+  color: var(--text);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+
+/* Pills */
+.pill, .small-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--muted);
+  background: rgba(79, 248, 235, 0.06);
+}
+.small-pill { padding: 2px 8px; font-size: 10px; }
+
+/* Mode select */
+.mode-select-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.mode-select {
+  background: rgba(2, 12, 18, 0.6);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 12px;
+}
+
+/* Field labels (auth) */
+.field-label {
+  font-size: 12px;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ---------------- Auth overlay refinements ---------------- */
+
+/* Instructional banner: visible without being pushy */
+.auth-hint {
+  background: rgba(79, 248, 235, 0.08);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin: 0 0 18px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.auth-hint strong { color: var(--text); }
+
+/* Make both tabs equally readable; emphasize the active one without
+   making the inactive one look disabled (so users still see it as a
+   real option) */
+.auth-tabs .tab-button {
+  flex: 1;
+  text-align: center;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--text);
+  background: rgba(2, 12, 18, 0.55);
+}
+.auth-tabs .tab-button.active {
+  background: rgba(79, 248, 235, 0.22);
+  border-color: var(--line-strong);
+}
+
+</style>
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+
+    <!-- Login overlay: matches the glass aesthetic, sits over the workspace
+         until the user is authenticated. Closes the multi-user gap without
+         imposing a separate visual style. -->
+    <div class="auth-overlay" id="auth-overlay" hidden>
+      <div class="glass auth-card">
+        <p class="eyebrow">Brownstone</p>
+        <h2>Sign in to continue</h2>
+        <p class="auth-hint">First time here? Click <strong>Create account</strong> to make a local account — anyone can sign up and the first user becomes admin.</p>
+        <div class="auth-tabs">
+          <button class="tab-button active" data-tab="login" type="button">Log in</button>
+          <button class="tab-button" data-tab="register" type="button">Create account</button>
+        </div>
+        <form id="login-form" class="auth-form">
+          <label class="field-label" for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" autocomplete="email" required />
+          <label class="field-label" for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+          <div class="auth-error" data-role="error"></div>
+          <button class="primary-button" type="submit">Log in</button>
+        </form>
+        <form id="register-form" class="auth-form" hidden>
+          <label class="field-label" for="register-email">Email</label>
+          <input id="register-email" name="email" type="email" autocomplete="email" required />
+          <label class="field-label" for="register-name">Display name</label>
+          <input id="register-name" name="displayName" type="text" autocomplete="name" />
+          <label class="field-label" for="register-password">Password (8+ chars)</label>
+          <input id="register-password" name="password" type="password" autocomplete="new-password" minlength="8" required />
+          <div class="auth-error" data-role="error"></div>
+          <button class="primary-button" type="submit">Create account</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="app-shell">
+      <header class="topbar glass">
+        <div>
+          <p class="eyebrow">Brownstone</p>
+          <h1>Prompt-first workspace for non-coders</h1>
+        </div>
+        <div class="topbar-meta">
+          <label class="mode-select-wrap">
+            <span class="small-pill">Thinking depth</span>
+            <select id="thinking-mode" class="mode-select">
+              <option value="quick">Quick</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="deep">Deep</option>
+            </select>
+          </label>
+          <span class="pill" id="health-pill">Loading…</span>
+          <span class="pill" id="mode-pill">Checking mode…</span>
+          <span class="pill user-pill" id="user-pill" hidden>—</span>
+          <button class="ghost-button" id="logout-button" type="button" hidden>Log out</button>
+        </div>
+      </header>
+
+      <main class="workspace-layout">
+        <!-- Panel 1: Chat / Composer -->
+        <section class="panel glass chat-panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Conversation</p>
+              <h2>Tell me what you want</h2>
+            </div>
+            <div class="header-controls">
+              <select id="session-select" class="mode-select" aria-label="Active session"></select>
+              <button class="ghost-button" id="new-session-button" type="button">New chat</button>
+            </div>
+          </div>
+
+          <div class="mode-strip" id="mode-strip"></div>
+
+          <div class="template-grid" id="template-grid"></div>
+
+          <div class="message-stream" id="message-stream">
+            <div class="welcome-card" id="welcome-card">
+              <p class="panel-eyebrow">Welcome</p>
+              <p>Hi. Tell me what you want in plain language. I'll guide you, ask follow-up questions when needed, and show you the result before anything changes. Try the prompt pills below, or type your own.</p>
+            </div>
+          </div>
+
+          <div class="composer glass">
+            <textarea id="chat-input" placeholder="Describe what you want in plain language. Example: review my project folder and tell me what to clean up."></textarea>
+            <div class="composer-footer composer-extended">
+              <div class="composer-tools">
+                <div class="suggestions" id="suggestions"></div>
+                <div class="inline-tools">
+                  <input id="upload-input" type="file" accept=".txt,.md,.csv,.json,.html,.css,.js" hidden />
+                  <button class="ghost-button" id="upload-button" type="button">Upload file</button>
+                  <button class="ghost-button" id="schedule-button" type="button">Schedule current prompt</button>
+                  <button class="ghost-button" id="export-button" type="button">Export session</button>
+                </div>
+              </div>
+              <button class="primary-button" id="send-button" type="button">Send</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel 2: Dashboard -->
+        <section class="panel glass dashboard-panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Project dashboard</p>
+              <h2>What the agent is doing</h2>
+            </div>
+            <button class="ghost-button" id="refresh-button" type="button">Refresh</button>
+          </div>
+
+          <div class="status-grid" id="status-grid"></div>
+
+          <div class="subgrid subgrid-extended">
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Safer defaults</h3>
+                <span class="small-pill">Default protection</span>
+              </div>
+              <div class="safety-list" id="safe-defaults"></div>
+            </div>
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Files and outputs</h3>
+                <span class="small-pill">Workspace</span>
+              </div>
+              <div class="file-tree" id="file-tree"></div>
+            </div>
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Sources</h3>
+                <span class="small-pill">Research cards</span>
+              </div>
+              <div class="card-list" id="source-list"></div>
+            </div>
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Uploads</h3>
+                <span class="small-pill">Retrieval</span>
+              </div>
+              <div class="card-list" id="uploads-list"></div>
+            </div>
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Schedules</h3>
+                <span class="small-pill">Automation</span>
+              </div>
+              <div class="card-list" id="schedule-list"></div>
+            </div>
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Exports</h3>
+                <span class="small-pill">Artifacts</span>
+              </div>
+              <div class="card-list" id="exports-list"></div>
+            </div>
+          </div>
+
+          <div class="glass inset-card activity-card">
+            <div class="section-title-row">
+              <h3>Activity history</h3>
+              <span class="small-pill">Live workspace events</span>
+            </div>
+            <div class="activity-feed" id="activity-feed"></div>
+          </div>
+        </section>
+
+        <!-- Panel 3: Preview / Approvals -->
+        <section class="panel glass preview-panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Preview and approvals</p>
+              <h2>See the result before it changes</h2>
+            </div>
+            <div class="tab-row">
+              <button class="tab-button active" data-tab="preview" type="button">Preview</button>
+              <button class="tab-button" data-tab="approval" type="button">Before / after</button>
+              <button class="tab-button" data-tab="sources" type="button">Sources</button>
+              <button class="tab-button" data-tab="memory" type="button">History</button>
+            </div>
+          </div>
+
+          <div class="preview-stack" id="preview-stack">
+            <div class="glass inset-card preview-surface active" data-surface="preview">
+              <div class="preview-empty" id="preview-empty">
+                <h3>Ready when you are</h3>
+                <p>Your page preview, research answer, summary output, file content, or screenshot notes will appear here.</p>
+              </div>
+              <iframe id="web-preview-frame" hidden></iframe>
+              <pre id="text-preview" hidden></pre>
+            </div>
+
+            <div class="glass inset-card preview-surface" data-surface="approval">
+              <div id="approval-empty" class="preview-empty">
+                <h3>No approval waiting</h3>
+                <p>When a file change needs your approval, you will see the before and after view here.</p>
+              </div>
+              <div class="approval-body" id="approval-body" hidden>
+                <div class="approval-summary">
+                  <div>
+                    <p class="panel-eyebrow">Approval required</p>
+                    <h3 id="approval-title"></h3>
+                    <p id="approval-summary-text"></p>
+                  </div>
+                  <span class="small-pill" id="approval-risk"></span>
+                </div>
+                <div class="before-after-grid">
+                  <div>
+                    <h4>Before</h4>
+                    <pre id="approval-before"></pre>
+                  </div>
+                  <div>
+                    <h4>After</h4>
+                    <pre id="approval-after"></pre>
+                  </div>
+                </div>
+                <div class="comment-wrap">
+                  <label class="field-label" for="approval-note">Comment for approval log</label>
+                  <textarea id="approval-note" rows="2" placeholder="Optional note for collaborators or your own history."></textarea>
+                </div>
+                <div class="approval-actions">
+                  <button class="secondary-button" id="reject-button" type="button">Reject</button>
+                  <button class="ghost-button" id="edit-request-button" type="button">Edit request</button>
+                  <button class="primary-button" id="approve-button" type="button">Approve</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass inset-card preview-surface" data-surface="sources">
+              <div class="card-list" id="source-surface"></div>
+            </div>
+
+            <div class="glass inset-card preview-surface" data-surface="memory">
+              <div class="memory-list" id="memory-list"></div>
+              <div class="comments-panel">
+                <div class="section-title-row">
+                  <h3>Collaboration comments</h3>
+                  <span class="small-pill">Shared context</span>
+                </div>
+                <div class="card-list" id="comments-list"></div>
+                <div class="inline-comment-form">
+                  <input id="comment-author" type="text" placeholder="Your name" />
+                  <textarea id="comment-input" rows="2" placeholder="Add a note to the current session or approval target."></textarea>
+                  <button class="ghost-button" id="comment-button" type="button">Add comment</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Approval token bar at the bottom; mirrors the original's affordance -->
+    <div class="approval-bar glass" id="approval-bar">
+      <span class="small-pill">Approval token</span>
+      <input id="approval-token" type="password" placeholder="Paste the operator-supplied approval token to enable writes" autocomplete="off" />
+      <button class="ghost-button" id="approval-clear" type="button">Clear</button>
+    </div>
+
+    
+  <script>
+'use strict';
+window.__demoRegistry = {};
+/**
+ * Fake backend for the standalone demo.
+ *
+ * The real chat UI calls fetch('/api/...') against the web proxy which
+ * forwards to the control plane. In this demo there is no network — we
+ * intercept fetch and dispatch to a handler table that keeps everything in
+ * memory. The interface this layer provides is identical to what the real
+ * control plane exposes, so the UI code is byte-for-byte production.
+ */
+(function setupFakeBackend() {
+  const STATE = {
+    users: [],
+    currentUserId: null,
+    sessionsById: new Map(),
+    nextSessionNum: 1,
+    csrfToken: 'demo-csrf-token-not-used-in-demo-mode',
+  };
+
+  function uid(prefix) {
+    return prefix + '_' + Math.random().toString(36).slice(2, 12);
+  }
+
+  function currentUser() {
+    return STATE.users.find((u) => u.id === STATE.currentUserId);
+  }
+
+  function json(body, status = 200, extraHeaders = {}) {
+    return new Response(JSON.stringify(body), {
+      status,
+      headers: { 'content-type': 'application/json', ...extraHeaders },
+    });
+  }
+
+  function errorResponse(message, status, code = 'error') {
+    return json({ error: message, code }, status);
+  }
+
+  // --- Auth handlers ---------------------------------------------------
+  function handleAuthRegister(body) {
+    if (!body.email || typeof body.email !== 'string') return errorResponse('Email required', 400, 'validation_failed');
+    if (!body.password || body.password.length < 8) return errorResponse('Password must be at least 8 characters', 400, 'validation_failed');
+    if (STATE.users.some((u) => u.email === body.email.toLowerCase())) {
+      return errorResponse('An account with that email already exists', 409, 'conflict');
+    }
+    const user = {
+      id: uid('user'),
+      email: body.email.toLowerCase(),
+      displayName: body.displayName || body.email.split('@')[0],
+      role: STATE.users.length === 0 ? 'admin' : 'member',
+      createdAt: new Date().toISOString(),
+    };
+    STATE.users.push(user);
+    STATE.currentUserId = user.id;
+    return json({ user, token: 'demo-token-' + user.id });
+  }
+
+  function handleAuthLogin(body) {
+    if (STATE.users.length === 0) {
+      // Demo-friendly hint: brand-new demo, the user has no account yet.
+      return errorResponse(
+        'No accounts exist yet in this demo session — click "Create account" to make one. Demo data is in-memory only and resets on refresh.',
+        401,
+        'no_accounts',
+      );
+    }
+    const user = STATE.users.find((u) => u.email === (body.email || '').toLowerCase());
+    if (!user) return errorResponse('Email or password is incorrect', 401, 'unauthenticated');
+    // Demo: any password works for an existing email.
+    STATE.currentUserId = user.id;
+    return json({ user, token: 'demo-token-' + user.id });
+  }
+
+  function handleAuthLogout() {
+    STATE.currentUserId = null;
+    return json({ ok: true });
+  }
+
+  function handleAuthMe() {
+    const user = currentUser();
+    if (!user) return errorResponse('Authentication required', 401, 'unauthenticated');
+    return json(user);
+  }
+
+  function handleAuthCsrf() {
+    if (!currentUser()) return errorResponse('Authentication required', 401, 'unauthenticated');
+    return json({ csrfToken: STATE.csrfToken });
+  }
+
+  // --- Sessions --------------------------------------------------------
+  function handleListSessions() {
+    const user = currentUser();
+    if (!user) return errorResponse('Authentication required', 401, 'unauthenticated');
+    const own = [...STATE.sessionsById.values()].filter((s) => user.role === 'admin' || s.ownerUserId === user.id);
+    own.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    return json(own.map((s) => ({
+      id: s.id, ownerUserId: s.ownerUserId,
+      createdAt: s.createdAt, updatedAt: s.updatedAt,
+      title: s.title, turns: [],
+    })));
+  }
+
+  function handleCreateSession() {
+    const user = currentUser();
+    if (!user) return errorResponse('Authentication required', 401, 'unauthenticated');
+    const now = new Date().toISOString();
+    const session = {
+      id: uid('session'),
+      ownerUserId: user.id,
+      createdAt: now, updatedAt: now,
+      title: 'Session ' + STATE.nextSessionNum++,
+      turns: [],
+    };
+    STATE.sessionsById.set(session.id, session);
+    return json(session);
+  }
+
+  function handleGetSession(id) {
+    const user = currentUser();
+    if (!user) return errorResponse('Authentication required', 401, 'unauthenticated');
+    const session = STATE.sessionsById.get(id);
+    if (!session || (user.role !== 'admin' && session.ownerUserId !== user.id)) {
+      return errorResponse('Session not found', 404, 'not_found');
+    }
+    return json(session);
+  }
+
+  // --- Health ----------------------------------------------------------
+  function handleHealth() {
+    return json({
+      ok: true,
+      mode: 'workspace-write',
+      providerMode: 'local-sim (demo)',
+      host: 'demo',
+      port: 0,
+      approvalRequired: false,
+      externalApprovalRequired: false,
+    });
+  }
+
+  // --- Streaming chat --------------------------------------------------
+  function handleChatStream(body) {
+    const user = currentUser();
+    if (!user) return errorResponse('Authentication required', 401, 'unauthenticated');
+    const session = STATE.sessionsById.get(body.sessionId);
+    if (!session || (user.role !== 'admin' && session.ownerUserId !== user.id)) {
+      return errorResponse('Session not found', 404, 'not_found');
+    }
+
+    const prompt = String(body.prompt || '');
+    const script = buildResponseScript(prompt, prompt.toLowerCase());
+
+    const encoder = new TextEncoder();
+    let cancelled = false;
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        function send(eventType, data) {
+          if (cancelled) return;
+          controller.enqueue(encoder.encode('event: ' + eventType + '\n'));
+          controller.enqueue(encoder.encode('data: ' + JSON.stringify(data) + '\n\n'));
+        }
+        function delay(ms) { return new Promise((r) => setTimeout(r, ms)); }
+
+        try {
+          for (const step of script) {
+            if (cancelled) break;
+            if (step.kind === 'tokens') {
+              for (const token of step.tokens) {
+                if (cancelled) break;
+                send('text_delta', { type: 'text_delta', text: token });
+                await delay(step.delay || 20);
+              }
+            } else if (step.kind === 'tool_start') {
+              send('tool_call_start', {
+                type: 'tool_call_start',
+                callId: step.callId,
+                toolName: step.toolName,
+                input: step.input,
+              });
+              await delay(step.delay || 800);
+            } else if (step.kind === 'tool_end') {
+              send('tool_call_end', {
+                type: 'tool_call_end',
+                callId: step.callId,
+                ok: step.ok,
+                output: step.output,
+                durationMs: step.durationMs,
+              });
+              await delay(step.afterDelay || 100);
+            } else if (step.kind === 'pause') {
+              await delay(step.ms);
+            }
+          }
+
+          if (!cancelled) {
+            const assistant = script.filter((s) => s.kind === 'tokens').flatMap((s) => s.tokens).join('');
+            const toolCalls = collectToolCalls(script);
+            session.turns.push({
+              timestamp: new Date().toISOString(),
+              user: prompt, assistant, toolCalls,
+            });
+            session.updatedAt = new Date().toISOString();
+            if (!session.title || session.title.startsWith('Session ')) {
+              session.title = prompt.slice(0, 60);
+            }
+            send('turn_complete', { type: 'turn_complete', sessionId: session.id, turnIndex: session.turns.length - 1 });
+          }
+          send('stream_end', { type: 'stream_end' });
+        } catch (error) {
+          send('error', { type: 'error', message: error.message, recoverable: false });
+        } finally {
+          controller.close();
+        }
+      },
+      cancel() { cancelled = true; },
+    });
+
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        'content-type': 'text/event-stream',
+        'cache-control': 'no-cache',
+        'connection': 'keep-alive',
+      },
+    });
+  }
+
+  function collectToolCalls(script) {
+    const callMap = new Map();
+    for (const step of script) {
+      if (step.kind === 'tool_start') {
+        callMap.set(step.callId, { id: step.callId, toolName: step.toolName, input: step.input });
+      } else if (step.kind === 'tool_end') {
+        const existing = callMap.get(step.callId);
+        if (existing) existing.result = { ok: step.ok, content: step.output };
+      }
+    }
+    return [...callMap.values()];
+  }
+
+  function tokensFor(text) {
+    const tokens = [];
+    let i = 0;
+    while (i < text.length) {
+      const step = 1 + Math.floor(Math.random() * 4);
+      tokens.push(text.slice(i, i + step));
+      i += step;
+    }
+    return tokens;
+  }
+
+  // --- Response synthesizer -------------------------------------------
+  function buildResponseScript(prompt, lower) {
+    if (lower.indexOf('use git_status') >= 0 || lower.indexOf('git status') >= 0) {
+      return [
+        { kind: 'tokens', tokens: tokensFor("Let me check the working tree for you.") },
+        { kind: 'pause', ms: 300 },
+        { kind: 'tool_start', callId: 'call_1', toolName: 'git_status', input: {}, delay: 1000 },
+        { kind: 'tool_end', callId: 'call_1', ok: true, durationMs: 142,
+          output: JSON.stringify({
+            branch: 'main',
+            modified: ['packages/runtime/src/index.ts', 'apps/web/public/js/chat.js'],
+            added: ['packages/runtime/src/builtin-tools.ts'],
+            deleted: [],
+            untracked: ['notes.txt'],
+          }, null, 2),
+        },
+        { kind: 'tokens', tokens: tokensFor(
+          "\n\nYou're on the **main** branch with these changes:\n\n" +
+          "- 2 modified files\n" +
+          "- 1 new file: builtin-tools.ts\n" +
+          "- 1 untracked file: notes.txt — you might want to add it to .gitignore or stage it.\n\n" +
+          "Nothing deleted. Want me to walk through the diff?"
+        ) },
+      ];
+    }
+
+    if (lower.indexOf('use workspace_read') >= 0 || (lower.indexOf('read ') >= 0 && lower.indexOf('.') >= 0)) {
+      const fileMatch = prompt.match(/[\w./-]+\.\w+/);
+      const file = fileMatch ? fileMatch[0] : 'README.md';
+      return [
+        { kind: 'tokens', tokens: tokensFor("Reading " + file + " from your workspace.") },
+        { kind: 'tool_start', callId: 'call_1', toolName: 'workspace_read', input: { relativePath: file }, delay: 600 },
+        { kind: 'tool_end', callId: 'call_1', ok: true, durationMs: 23,
+          output: "# Safe Agent Studio\n\nA local-first, multi-process agent platform...\n\n## Architecture\n…" },
+        { kind: 'tokens', tokens: tokensFor(
+          "\n\nThe file starts with the project's README. Here are the highlights:\n\n" +
+          "1. It's a **monorepo** with 21 packages and 7 apps.\n" +
+          "2. The chat path streams via **Server-Sent Events**.\n" +
+          "3. Authentication is **scrypt-hashed**, no native dependencies.\n\n" +
+          "Want me to read a specific section in more detail?"
+        ) },
+      ];
+    }
+
+    if (lower.indexOf('use web_search') >= 0 || lower.indexOf('search the web') >= 0) {
+      return [
+        { kind: 'tokens', tokens: tokensFor("I'll search the web for that.") },
+        { kind: 'tool_start', callId: 'call_1', toolName: 'web_search',
+          input: { query: prompt.replace(/use|web_search/gi, '').trim() || 'platform' }, delay: 1200 },
+        { kind: 'tool_end', callId: 'call_1', ok: false, durationMs: 18,
+          output: "Web search is disabled on this server. Set SAFE_AGENT_SEARCH_PROVIDER=brave and BRAVE_SEARCH_API_KEY to enable." },
+        { kind: 'tokens', tokens: tokensFor(
+          "\n\nWeb search isn't enabled in this demo. To turn it on in a real deployment:\n\n" +
+          "```bash\n" +
+          "export SAFE_AGENT_SEARCH_PROVIDER=brave\n" +
+          "export BRAVE_SEARCH_API_KEY=your-key-here\n" +
+          "```\n\n" +
+          "After restarting the control plane, the web_search tool will return real results."
+        ) },
+      ];
+    }
+
+    if (lower.indexOf('write') >= 0 && (lower.indexOf('function') >= 0 || lower.indexOf('code') >= 0)) {
+      return [
+        { kind: 'tokens', tokens: tokensFor(
+          "Here's a small example:\n\n" +
+          "```typescript\n" +
+          "function debounce<T extends (...args: any[]) => void>(\n" +
+          "  fn: T,\n" +
+          "  ms: number,\n" +
+          "): T {\n" +
+          "  let timer: ReturnType<typeof setTimeout> | undefined;\n" +
+          "  return ((...args: Parameters<T>) => {\n" +
+          "    clearTimeout(timer);\n" +
+          "    timer = setTimeout(() => fn(...args), ms);\n" +
+          "  }) as T;\n" +
+          "}\n" +
+          "```\n\n" +
+          "It takes any function and a delay, and returns a wrapped version that " +
+          "only fires after `ms` milliseconds have passed without a call. " +
+          "Common uses: search input handlers, window resize listeners."
+        ) },
+      ];
+    }
+
+    if (lower.indexOf('explain') === 0 || lower.indexOf('how does') >= 0 || lower.indexOf('what is') >= 0) {
+      return [
+        { kind: 'tokens', tokens: tokensFor(
+          "## Streaming responses\n\n" +
+          "When you send a message, this happens:\n\n" +
+          "1. The browser POSTs to /api/chat/stream with your prompt.\n" +
+          "2. The web proxy forwards to the control plane (port 8787).\n" +
+          "3. The control plane invokes the provider, which holds an open HTTP connection.\n" +
+          "4. **Tokens flow back through three hops** — provider → control plane → proxy → browser.\n\n" +
+          "Each hop is a ReadableStream, so nothing buffers. You see the response materialize word by word.\n\n" +
+          "If the model decides to call a tool, that event is interleaved in the same stream — that's what " +
+          "the collapsible tool-call blocks below show."
+        ) },
+      ];
+    }
+
+    return [
+      { kind: 'tokens', tokens: tokensFor(
+        "Thanks for trying the demo! This is a synthetic response — the real control plane would " +
+        "have routed your prompt to OpenAI or Anthropic (or a local model via the OpenAI-compatible " +
+        "interface) and streamed back actual tokens.\n\n" +
+        "A few things to try here:\n\n" +
+        "- Type **use git_status** to see a tool call panel appear and complete.\n" +
+        "- Type **use workspace_read README.md** to see a file-read tool call.\n" +
+        "- Ask me to **write a debounce function** to see code with syntax highlighting.\n" +
+        "- Ask **explain how streaming works** to see a markdown reply with headings and lists.\n\n" +
+        "Everything you see — token-by-token rendering, markdown, collapsible tool calls, the login/session " +
+        "flow — is the actual production UI code, just talking to a fake backend instead of a live server."
+      ) },
+    ];
+  }
+
+  // --- Stubs for other panes ------------------------------------------
+  function handleListTasks()      { return json([]); }
+  function handleListSchedules()  { return json([]); }
+  function handleListExports()    { return json([]); }
+  function handleListUploads()    { return json([]); }
+  function handleListMemory()     { return json([]); }
+  function handleWorkspaceTree()  {
+    return json({
+      root: '/demo/workspace',
+      entries: [
+        { name: 'apps', relativePath: 'apps', type: 'dir', children: [
+          { name: 'web', relativePath: 'apps/web', type: 'dir' },
+          { name: 'cli', relativePath: 'apps/cli', type: 'dir' },
+        ]},
+        { name: 'packages', relativePath: 'packages', type: 'dir' },
+        { name: 'README.md', relativePath: 'README.md', type: 'file' },
+        { name: 'package.json', relativePath: 'package.json', type: 'file' },
+      ],
+    });
+  }
+  function handleWorkspaceFile(p) {
+    return json({
+      relativePath: p,
+      content: '// Demo: this would show the contents of ' + p,
+      mimeType: 'text/plain',
+    });
+  }
+  function handleTelemetry() { return json([]); }
+  function handleResearchAnswer(body) {
+    return json({
+      query: body.query,
+      mode: body.mode || 'balanced',
+      answer: 'The research pane would normally search the web and synthesize an answer. ' +
+              'In this demo, search is disabled, so this is a stub response.',
+      summary: 'Demo answer for: ' + body.query,
+      provider: 'demo',
+      search: { query: body.query, results: [], provider: 'disabled' },
+      citations: [],
+      fetchedPages: [],
+    });
+  }
+
+  // --- Router ----------------------------------------------------------
+  const originalFetch = window.fetch.bind(window);
+
+  window.fetch = async function (input, init) {
+    const url = typeof input === 'string' ? input : input.url;
+    const method = ((init && init.method) || (typeof input !== 'string' && input.method) || 'GET').toUpperCase();
+    let body = {};
+    if (init && init.body) {
+      try { body = JSON.parse(init.body); } catch { body = {}; }
+    }
+
+    if (url.indexOf('/api/') !== 0) return originalFetch(input, init);
+
+    const path = url.replace(/^\/api/, '').split('?')[0];
+    await new Promise((r) => setTimeout(r, 30));
+
+    if (path === '/health' && method === 'GET') return handleHealth();
+
+    if (path === '/auth/register' && method === 'POST') return handleAuthRegister(body);
+    if (path === '/auth/login' && method === 'POST') return handleAuthLogin(body);
+    if (path === '/auth/logout' && method === 'POST') return handleAuthLogout();
+    if (path === '/auth/me' && method === 'GET') return handleAuthMe();
+    if (path === '/auth/csrf' && method === 'GET') return handleAuthCsrf();
+
+    if (path === '/sessions' && method === 'GET') return handleListSessions();
+    if (path === '/sessions' && method === 'POST') return handleCreateSession();
+    if (path.indexOf('/sessions/') === 0 && method === 'GET') {
+      const id = path.slice('/sessions/'.length);
+      return handleGetSession(decodeURIComponent(id));
+    }
+
+    if (path === '/chat/stream' && method === 'POST') return handleChatStream(body);
+    if (path === '/chat' && method === 'POST') {
+      return json({ ok: true, answer: 'Non-streaming chat would respond here.' });
+    }
+
+    if (path === '/tasks' && method === 'GET') return handleListTasks();
+    if (path === '/schedules' && method === 'GET') return handleListSchedules();
+    if (path === '/exports' && method === 'GET') return handleListExports();
+    if (path === '/uploads' && method === 'GET') return handleListUploads();
+    if (path === '/memory' && method === 'GET') return handleListMemory();
+    if (path === '/telemetry' && method === 'GET') return handleTelemetry();
+    if (path === '/workspace/tree' && method === 'GET') return handleWorkspaceTree();
+    if (path.indexOf('/workspace/file') === 0 && method === 'GET') {
+      const qs = url.split('?')[1] || '';
+      const param = new URLSearchParams(qs).get('path') || 'unknown';
+      return handleWorkspaceFile(param);
+    }
+    if (path === '/research/answer' && method === 'POST') return handleResearchAnswer(body);
+
+    return errorResponse('Route not found in demo: ' + method + ' ' + path, 404, 'not_found');
+  };
+
+  // Demo badge.
+  window.addEventListener('DOMContentLoaded', () => {
+    const badge = document.createElement('div');
+    badge.style.cssText = 'position:fixed;bottom:60px;right:14px;z-index:9999;background:#5b8def;color:white;font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;font-family:-apple-system,sans-serif;letter-spacing:0.04em;text-transform:uppercase;pointer-events:none;';
+    badge.textContent = 'Demo mode · no backend';
+    document.body.append(badge);
+  });
+})();
+
+
+;(function(){
+/**
+ * Thin API client wrapping fetch.
+ *
+ * Responsibilities:
+ *   - Maintain CSRF token (fetched once after login).
+ *   - Inject the approval-token header on requests that need it.
+ *   - Surface 401 by triggering re-authentication.
+ *   - Parse JSON error bodies into structured Error objects.
+ */
+
+let csrfToken = null;
+let onUnauthorized = () => {};
+let unauthorizedInFlight = null;
+
+function configureClient(opts) {
+  if (opts.onUnauthorized) onUnauthorized = opts.onUnauthorized;
+}
+
+async function refreshCsrf() {
+  const response = await fetch('/api/auth/csrf', { credentials: 'same-origin' });
+  if (response.status === 401) { csrfToken = null; return null; }
+  if (!response.ok) throw new Error('Failed to fetch CSRF token');
+  const data = await response.json();
+  csrfToken = data.csrfToken ?? null;
+  return csrfToken;
+}
+
+function getCsrfToken() { return csrfToken; }
+function clearCsrfToken() { csrfToken = null; }
+
+function buildHeaders(extra = {}, requiresCsrf, approvalToken) {
+  const headers = { 'content-type': 'application/json' };
+  if (requiresCsrf && csrfToken) headers['x-brownstone-csrf'] = csrfToken;
+  if (approvalToken) headers['x-brownstone-approval'] = approvalToken;
+  return { ...headers, ...extra };
+}
+
+async function parseError(response) {
+  let body = null;
+  try { body = await response.json(); } catch { /* non-JSON */ }
+  const message = body?.error || `${response.status} ${response.statusText}`;
+  const error = new Error(message);
+  error.statusCode = response.status;
+  error.code = body?.code;
+  return error;
+}
+
+async function api(method, path, options = {}) {
+  const isMutating = method !== 'GET' && method !== 'HEAD';
+  const response = await fetch(`/api${path}`, {
+    method,
+    credentials: 'same-origin',
+    headers: buildHeaders(options.headers ?? {}, isMutating, options.approvalToken),
+    body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+  });
+
+  if (response.status === 401) {
+    csrfToken = null;
+    // Callers like auth.bootstrap() opt out so they can handle the 401
+    // themselves without recursing through the global unauth handler.
+    if (!options.skipUnauthHandler) {
+      if (!unauthorizedInFlight) {
+        const result = Promise.resolve(onUnauthorized());
+        unauthorizedInFlight = result.finally(() => {
+          unauthorizedInFlight = null;
+        });
+      }
+      try { await unauthorizedInFlight; } catch { /* swallow */ }
+    }
+    throw await parseError(response);
+  }
+  if (!response.ok) throw await parseError(response);
+
+  const contentType = response.headers.get('content-type') ?? '';
+  if (contentType.includes('application/json')) return response.json();
+  return response.text();
+}
+
+
+window.__demoRegistry.api = { configureClient, refreshCsrf, getCsrfToken, clearCsrfToken, api };
+})();
+
+
+;(function(){
+/**
+ * Approval token state.
+ *
+ * Memory-only (no localStorage) — the token is sensitive and shouldn't persist
+ * between browser sessions. The operator pastes it once into the bar at the
+ * bottom of the workspace.
+ *
+ * app.js owns the DOM wiring and calls setApprovalToken(); this module is the
+ * single source of truth that other modules (chat) read from.
+ */
+
+let approvalToken = '';
+
+function getApprovalToken() {
+  return approvalToken || null;
+}
+
+function setApprovalToken(value) {
+  approvalToken = value ?? '';
+}
+
+function init() {
+  // No-op: the original Pass 2 wiring lived here, but the restored design
+  // moves the bar to a different location and app.js handles binding.
+  // Kept for API stability.
+}
+
+
+window.__demoRegistry.approval = { getApprovalToken, setApprovalToken, init };
+})();
+
+
+;(function(){
+/**
+ * Minimal markdown renderer.
+ *
+ * Handles: headings, bold, italic, inline code, code blocks (with language),
+ * unordered/ordered lists, blockquotes, links, line breaks.
+ *
+ * Why not a library? marked + DOMPurify is ~50KB minified; we need maybe
+ * 5KB worth of features for the chat UI. This stays under 150 lines and
+ * has no transitive dependencies — easy to audit for XSS.
+ *
+ * The renderer escapes HTML *first*, then applies markdown patterns over
+ * the escaped text. That order matters: a user prompt like `<script>` is
+ * displayed literally because '<' becomes '&lt;' before any regex runs.
+ */
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function escapeAttr(text) {
+  return escapeHtml(text).replace(/`/g, '&#96;');
+}
+
+/**
+ * Highlight a code block. Returns escaped HTML with span wrappers for
+ * common token types. The grammar is approximate, not a full parser — just
+ * enough to make code readable in chat. Recognizes:
+ *   - Comments (// and #)
+ *   - Strings (single, double, backtick)
+ *   - Keywords (a small common set)
+ *   - Numbers
+ * Anything else is left as escaped text.
+ */
+const KEYWORDS = new Set([
+  // common across many languages
+  'function', 'return', 'if', 'else', 'for', 'while', 'do', 'switch', 'case',
+  'break', 'continue', 'const', 'let', 'var', 'class', 'new', 'this', 'super',
+  'extends', 'implements', 'import', 'export', 'from', 'as', 'default',
+  'async', 'await', 'true', 'false', 'null', 'undefined', 'try', 'catch',
+  'finally', 'throw', 'typeof', 'instanceof', 'in', 'of', 'delete', 'void',
+  'def', 'lambda', 'pass', 'yield', 'with', 'is', 'not', 'and', 'or', 'None',
+  'True', 'False', 'self', 'print', 'public', 'private', 'protected', 'static',
+  'interface', 'type', 'enum', 'namespace', 'package',
+]);
+
+function highlight(code, language) {
+  const escaped = escapeHtml(code);
+  if (!language) return escaped;
+
+  // Apply patterns in order: comments → strings → numbers → keywords.
+  // We replace with sentinel tokens to avoid double-wrapping.
+  let out = escaped;
+  // Single-line comments
+  out = out.replace(/(\/\/[^\n]*)/g, '<span class="tok-comment">$1</span>');
+  out = out.replace(/(^|\n)(#[^\n]*)/g, '$1<span class="tok-comment">$2</span>');
+  // Strings (already-escaped quotes)
+  out = out.replace(/(&quot;[^&]*?&quot;|&#39;[^&]*?&#39;|`[^`]*?`)/g, '<span class="tok-string">$1</span>');
+  // Numbers
+  out = out.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="tok-number">$1</span>');
+  // Keywords (avoid replacing inside span tags)
+  out = out.replace(/\b([a-zA-Z_]+)\b/g, (match) => (
+    KEYWORDS.has(match) ? `<span class="tok-keyword">${match}</span>` : match
+  ));
+  return out;
+}
+
+function renderMarkdown(source) {
+  if (!source) return '';
+
+  const lines = source.split('\n');
+  const out = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // Fenced code block
+    const fence = line.match(/^```(\w*)\s*$/);
+    if (fence) {
+      const lang = fence[1] || '';
+      const buffer = [];
+      i += 1;
+      while (i < lines.length && !/^```\s*$/.test(lines[i])) {
+        buffer.push(lines[i]);
+        i += 1;
+      }
+      if (i < lines.length) i += 1; // consume closing fence
+      const langClass = lang ? ` data-lang="${escapeAttr(lang)}"` : '';
+      out.push(`<pre class="md-code"${langClass}><code>${highlight(buffer.join('\n'), lang)}</code></pre>`);
+      continue;
+    }
+
+    // Heading
+    const heading = line.match(/^(#{1,6})\s+(.*)$/);
+    if (heading) {
+      const level = heading[1].length;
+      out.push(`<h${level} class="md-h${level}">${renderInline(heading[2])}</h${level}>`);
+      i += 1;
+      continue;
+    }
+
+    // Blockquote
+    if (line.startsWith('> ')) {
+      const buf = [];
+      while (i < lines.length && lines[i].startsWith('> ')) {
+        buf.push(lines[i].slice(2));
+        i += 1;
+      }
+      out.push(`<blockquote class="md-quote">${renderInline(buf.join(' '))}</blockquote>`);
+      continue;
+    }
+
+    // Unordered list
+    if (/^[-*]\s+/.test(line)) {
+      const items = [];
+      while (i < lines.length && /^[-*]\s+/.test(lines[i])) {
+        items.push(`<li>${renderInline(lines[i].replace(/^[-*]\s+/, ''))}</li>`);
+        i += 1;
+      }
+      out.push(`<ul class="md-list">${items.join('')}</ul>`);
+      continue;
+    }
+
+    // Ordered list
+    if (/^\d+\.\s+/.test(line)) {
+      const items = [];
+      while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
+        items.push(`<li>${renderInline(lines[i].replace(/^\d+\.\s+/, ''))}</li>`);
+        i += 1;
+      }
+      out.push(`<ol class="md-list">${items.join('')}</ol>`);
+      continue;
+    }
+
+    // Empty line
+    if (line.trim() === '') {
+      i += 1;
+      continue;
+    }
+
+    // Paragraph (continues until blank line or block element)
+    const buf = [line];
+    i += 1;
+    while (i < lines.length
+        && lines[i].trim() !== ''
+        && !lines[i].startsWith('```')
+        && !/^#{1,6}\s/.test(lines[i])
+        && !/^[-*]\s/.test(lines[i])
+        && !/^\d+\.\s/.test(lines[i])
+        && !lines[i].startsWith('> ')) {
+      buf.push(lines[i]);
+      i += 1;
+    }
+    out.push(`<p class="md-p">${renderInline(buf.join(' '))}</p>`);
+  }
+
+  return out.join('\n');
+}
+
+function renderInline(text) {
+  let out = escapeHtml(text);
+  // Inline code (escaped quotes don't matter here because backticks aren't in our escape set)
+  out = out.replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>');
+  // Bold then italic. The order matters because **bold** would otherwise
+  // partially match the italic regex.
+  out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  out = out.replace(/(?<![*\w])\*([^*]+)\*(?!\w)/g, '<em>$1</em>');
+  // Links — keep target=_blank rel=noopener.
+  out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_match, label, url) => (
+    `<a href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">${label}</a>`
+  ));
+  return out;
+}
+
+
+window.__demoRegistry.markdown = { renderMarkdown };
+})();
+
+
+;(function(){
+const { api } = window.__demoRegistry.api;
+
+function renderNode(node, container) {
+  const wrapper = document.createElement('div');
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = `${node.type === 'dir' ? '📁' : '📄'} ${node.name}`;
+  wrapper.append(button);
+  container.append(wrapper);
+
+  if (node.type === 'file') {
+    button.addEventListener('click', async () => {
+      try {
+        const file = await api('GET', `/workspace/file?path=${encodeURIComponent(node.relativePath)}`);
+        document.getElementById('workspace-file').textContent = file.content;
+      } catch (error) {
+        document.getElementById('workspace-file').textContent = `Failed: ${error.message}`;
+      }
+    });
+  } else if (node.children?.length) {
+    const list = document.createElement('ul');
+    wrapper.append(list);
+    for (const child of node.children) renderNode(child, list);
+  }
+}
+
+async function refresh() {
+  const tree = await api('GET', '/workspace/tree?depth=3');
+  const root = document.getElementById('workspace-tree');
+  root.replaceChildren();
+  for (const node of tree.entries) renderNode(node, root);
+}
+
+function init() {
+  // Lazy load on first activation by main shell.
+}
+
+
+window.__demoRegistry.workspace = { refresh, init };
+})();
+
+
+;(function(){
+const { api } = window.__demoRegistry.api;
+
+function renderTasks(tasks) {
+  const list = document.getElementById('task-list');
+  list.replaceChildren();
+  if (!tasks.length) {
+    const empty = document.createElement('li');
+    empty.textContent = 'No tasks yet.';
+    list.append(empty);
+    return;
+  }
+  for (const task of tasks) {
+    const item = document.createElement('li');
+
+    const status = document.createElement('span');
+    status.className = `task-status is-${task.status}`;
+    status.textContent = task.status;
+
+    const id = document.createElement('span');
+    id.textContent = ` ${task.id.slice(0, 12)} `;
+
+    const kind = document.createElement('strong');
+    kind.textContent = task.kind;
+
+    const meta = document.createElement('div');
+    meta.style.fontSize = '12px';
+    meta.style.color = 'var(--text-dim)';
+    meta.style.marginTop = '4px';
+    meta.textContent = `created ${new Date(task.createdAt).toLocaleString()}${task.error ? ` — ${task.error}` : ''}`;
+
+    item.append(status, id, kind, meta);
+    list.append(item);
+  }
+}
+
+async function refresh() {
+  const tasks = await api('GET', '/tasks');
+  renderTasks(tasks);
+}
+
+function init() {
+  document.getElementById('refresh-tasks').addEventListener('click', refresh);
+}
+
+
+window.__demoRegistry.tasks = { refresh, init };
+})();
+
+
+;(function(){
+const { api } = window.__demoRegistry.api;
+
+function renderAnswer(result) {
+  const article = document.getElementById('research-answer');
+  article.replaceChildren();
+
+  const heading = document.createElement('h3');
+  heading.textContent = result.query;
+  article.append(heading);
+
+  const summary = document.createElement('p');
+  summary.textContent = result.summary || '(no summary)';
+  article.append(summary);
+
+  const body = document.createElement('div');
+  body.textContent = result.answer;
+  body.style.whiteSpace = 'pre-wrap';
+  article.append(body);
+
+  if (result.citations?.length) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'citations';
+    const title = document.createElement('strong');
+    title.textContent = 'Citations';
+    wrapper.append(title);
+    const list = document.createElement('ol');
+    for (const citation of result.citations) {
+      const item = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = citation.url;
+      link.textContent = citation.title;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      item.append(link);
+      if (citation.snippet) {
+        const note = document.createElement('div');
+        note.style.color = 'var(--text-dim)';
+        note.style.fontSize = '12px';
+        note.textContent = citation.snippet;
+        item.append(note);
+      }
+      list.append(item);
+    }
+    wrapper.append(list);
+    article.append(wrapper);
+  }
+}
+
+function init() {
+  document.getElementById('research-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const query = document.getElementById('research-query').value.trim();
+    const mode = document.getElementById('research-mode').value;
+    if (!query) return;
+    const article = document.getElementById('research-answer');
+    article.textContent = 'Researching…';
+    try {
+      const result = await api('POST', '/research/answer', { body: { query, mode } });
+      renderAnswer(result);
+    } catch (error) {
+      article.textContent = `Failed: ${error.message}`;
+    }
+  });
+}
+
+
+window.__demoRegistry.research = { init };
+})();
+
+
+;(function(){
+const { api } = window.__demoRegistry.api;
+
+function renderSchedules(schedules) {
+  const list = document.getElementById('schedule-list');
+  list.replaceChildren();
+  if (!schedules.length) {
+    const empty = document.createElement('li');
+    empty.textContent = 'No schedules.';
+    list.append(empty);
+    return;
+  }
+  for (const schedule of schedules) {
+    const item = document.createElement('li');
+    const title = document.createElement('strong');
+    title.textContent = schedule.title;
+    const meta = document.createElement('div');
+    meta.style.fontSize = '12px';
+    meta.style.color = 'var(--text-dim)';
+    meta.textContent = `every ${Math.round(schedule.everyMs / 1000)}s — next ${new Date(schedule.nextRunAt).toLocaleString()}`;
+    const prompt = document.createElement('div');
+    prompt.style.marginTop = '6px';
+    prompt.textContent = schedule.prompt;
+    item.append(title, meta, prompt);
+    list.append(item);
+  }
+}
+
+async function refresh() {
+  const schedules = await api('GET', '/schedules');
+  renderSchedules(schedules);
+}
+
+function init() {
+  document.getElementById('schedule-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const data = new FormData(form);
+    try {
+      await api('POST', '/schedules', {
+        body: {
+          title: data.get('title'),
+          prompt: data.get('prompt'),
+          everyMs: Number(data.get('everyMs')),
+        },
+      });
+      form.reset();
+      await refresh();
+    } catch (error) {
+      alert(`Create failed: ${error.message}`);
+    }
+  });
+}
+
+
+window.__demoRegistry.schedules = { refresh, init };
+})();
+
+
+;(function(){
+const { api } = window.__demoRegistry.api;
+
+async function refresh() {
+  const exports = await api('GET', '/exports');
+  const list = document.getElementById('export-list');
+  list.replaceChildren();
+  if (!exports.length) {
+    const empty = document.createElement('li');
+    empty.textContent = 'No exports yet.';
+    list.append(empty);
+    return;
+  }
+  for (const record of exports) {
+    const item = document.createElement('li');
+    const title = document.createElement('strong');
+    title.textContent = record.title;
+    const meta = document.createElement('div');
+    meta.style.fontSize = '12px';
+    meta.style.color = 'var(--text-dim)';
+    meta.textContent = new Date(record.createdAt).toLocaleString();
+    item.append(title, meta);
+
+    for (const [label, key] of [['HTML', 'htmlPath'], ['Markdown', 'markdownPath'], ['JSON', 'jsonPath']]) {
+      const pathValue = record[key];
+      if (!pathValue) continue;
+      const link = document.createElement('a');
+      link.href = `/api/artifacts/raw?path=${encodeURIComponent(pathValue)}`;
+      link.textContent = label;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.style.marginRight = '12px';
+      item.append(link);
+    }
+    list.append(item);
+  }
+}
+
+function init() { /* nothing on init */ }
+
+
+window.__demoRegistry.exports = { refresh, init };
+})();
+
+
+;(function(){
+const { api, refreshCsrf, clearCsrfToken } = window.__demoRegistry.api;
+
+/**
+ * Login/register overlay.
+ *
+ * The overlay sits over the workspace (z-index 200) and toggles with the
+ * HTML `hidden` attribute. We do NOT hide the underlying app-shell — the
+ * overlay's backdrop blur takes care of that visually, and keeping the
+ * shell rendered avoids a flash on each auth state change.
+ *
+ * Public API:
+ *   - init()              wire form submits + logout button (called once at boot)
+ *   - bootstrap()         try /auth/me; show overlay on 401, emit on success
+ *   - onAuthChange(fn)    subscribe; receives the current user or null
+ *   - getCurrentUser()    last-known user
+ *   - logout()            POST /auth/logout, clear state, re-show overlay
+ */
+
+let currentUser = null;
+const authListeners = new Set();
+
+function onAuthChange(listener) {
+  authListeners.add(listener);
+  return () => authListeners.delete(listener);
+}
+
+function emit() {
+  for (const listener of authListeners) listener(currentUser);
+}
+
+function getCurrentUser() {
+  return currentUser;
+}
+
+async function bootstrap() {
+  try {
+    // skipUnauthHandler: bootstrap *is* the unauth handler, so it must
+    // not re-trigger itself via the api client on 401.
+    const me = await api('GET', '/auth/me', { skipUnauthHandler: true });
+    currentUser = me;
+    await refreshCsrf();
+    hideOverlay();
+    emit();
+    return me;
+  } catch (error) {
+    if (error.statusCode === 401) {
+      showOverlay();
+      emit();
+      return null;
+    }
+    throw error;
+  }
+}
+
+async function logout() {
+  try {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+  } catch { /* fall through */ }
+  currentUser = null;
+  clearCsrfToken();
+  showOverlay();
+  emit();
+}
+
+function setError(form, message) {
+  const slot = form.querySelector('[data-role="error"]');
+  if (slot) slot.textContent = message ?? '';
+}
+
+function bindLoginForm(overlay) {
+  const form = overlay.querySelector('#login-form');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    setError(form, null);
+    const data = new FormData(form);
+    try {
+      const result = await api('POST', '/auth/login', {
+        body: { email: data.get('email'), password: data.get('password') },
+      });
+      currentUser = result.user;
+      await refreshCsrf();
+      hideOverlay();
+      emit();
+    } catch (error) {
+      setError(form, error.message);
+    }
+  });
+}
+
+function bindRegisterForm(overlay) {
+  const form = overlay.querySelector('#register-form');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    setError(form, null);
+    const data = new FormData(form);
+    try {
+      const result = await api('POST', '/auth/register', {
+        body: {
+          email: data.get('email'),
+          password: data.get('password'),
+          displayName: data.get('displayName') ?? '',
+        },
+      });
+      currentUser = result.user;
+      await refreshCsrf();
+      hideOverlay();
+      emit();
+    } catch (error) {
+      setError(form, error.message);
+    }
+  });
+}
+
+function bindTabs(overlay) {
+  const tabs = overlay.querySelectorAll('.auth-tabs .tab-button');
+  const forms = {
+    login: overlay.querySelector('#login-form'),
+    register: overlay.querySelector('#register-form'),
+  };
+  for (const tab of tabs) {
+    tab.addEventListener('click', () => {
+      tabs.forEach((other) => other.classList.toggle('active', other === tab));
+      const target = tab.dataset.tab;
+      for (const [name, form] of Object.entries(forms)) {
+        form.hidden = name !== target;
+      }
+    });
+  }
+}
+
+function showOverlay() {
+  const overlay = document.getElementById('auth-overlay');
+  if (!overlay) return;
+  overlay.hidden = false;
+  // Reset the tab to "Log in" — if the user previously created an account
+  // they're likely coming back to log in, not register a second time.
+  const tabs = overlay.querySelectorAll('.auth-tabs .tab-button');
+  tabs.forEach((t) => t.classList.toggle('active', t.dataset.tab === 'login'));
+  overlay.querySelector('#login-form').hidden = false;
+  overlay.querySelector('#register-form').hidden = true;
+  // Clear any stale errors and password fields.
+  overlay.querySelectorAll('[data-role="error"]').forEach((el) => { el.textContent = ''; });
+  overlay.querySelectorAll('input[type="password"]').forEach((el) => { el.value = ''; });
+}
+
+function hideOverlay() {
+  const overlay = document.getElementById('auth-overlay');
+  if (overlay) overlay.hidden = true;
+}
+
+function init() {
+  const overlay = document.getElementById('auth-overlay');
+  bindTabs(overlay);
+  bindLoginForm(overlay);
+  bindRegisterForm(overlay);
+
+  const logoutButton = document.getElementById('logout-button');
+  if (logoutButton) {
+    logoutButton.addEventListener('click', () => {
+      logout();
+    });
+  }
+}
+
+
+window.__demoRegistry.auth = { onAuthChange, getCurrentUser, bootstrap, logout, init };
+})();
+
+
+;(function(){
+/**
+ * Chat module: streaming + tool calls + markdown, rendered into the original
+ * design's message-stream / message-bubble DOM.
+ *
+ * Public API: init({ ...elements }), refreshSessions(), setThinkingModeProvider().
+ *
+ * Layout:
+ *   For each turn we append one .message-bubble.user and one
+ *   .message-bubble.assistant. Tool calls appear inside the assistant bubble.
+ *   Markdown is rendered with the same renderer chat used before.
+ */
+
+const { api } = window.__demoRegistry.api;
+const { getApprovalToken } = window.__demoRegistry.approval;
+const { renderMarkdown } = window.__demoRegistry.markdown;
+
+let activeSessionId = null;
+let activeStreamAbort = null;
+let getThinkingMode = () => 'balanced';
+
+// DOM handles, populated by init().
+let messageStream = null;
+let chatInput = null;
+let sendButton = null;
+let sessionSelect = null;
+let newSessionButton = null;
+let welcomeCard = null;
+
+function setThinkingModeProvider(fn) {
+  if (typeof fn === 'function') getThinkingMode = fn;
+}
+
+// ---------- Rendering primitives ----------
+
+function escapeHtml(text) {
+  return String(text ?? '').replace(/[&<>]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[ch]);
+}
+
+function buildUserBubble(text) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'message-bubble user';
+  wrapper.innerHTML = `<div class="message-meta">You</div>`;
+  const p = document.createElement('p');
+  p.textContent = text;
+  wrapper.appendChild(p);
+  return wrapper;
+}
+
+function buildAssistantBubble(initialText = '') {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'message-bubble assistant';
+
+  const meta = document.createElement('div');
+  meta.className = 'message-meta';
+  meta.textContent = 'Brownstone';
+  wrapper.appendChild(meta);
+
+  const body = document.createElement('div');
+  body.className = 'message-body';
+  body.dataset.role = 'assistant-text';
+  body.innerHTML = renderMarkdown(initialText);
+  wrapper.appendChild(body);
+
+  const toolList = document.createElement('div');
+  toolList.className = 'tool-calls';
+  toolList.dataset.role = 'tool-list';
+  wrapper.appendChild(toolList);
+
+  return wrapper;
+}
+
+function buildToolCallElement(call) {
+  const el = document.createElement('details');
+  el.className = 'tool-call';
+  el.dataset.callId = call.id;
+  el.dataset.status = call.result ? (call.result.ok ? 'ok' : 'failed') : 'running';
+
+  const summary = document.createElement('summary');
+  const indicator = document.createElement('span');
+  indicator.className = 'tool-indicator';
+  indicator.textContent = el.dataset.status === 'running' ? '⋯' : el.dataset.status === 'ok' ? '✓' : '✗';
+  const name = document.createElement('span');
+  name.className = 'tool-name';
+  name.textContent = call.toolName;
+  const duration = document.createElement('span');
+  duration.className = 'tool-duration';
+  duration.dataset.role = 'duration';
+  duration.textContent = call.result?.durationMs ? ` ${call.result.durationMs}ms` : '';
+  summary.append(indicator, document.createTextNode(' '), name, duration);
+  el.append(summary);
+
+  const inputBlock = document.createElement('pre');
+  inputBlock.className = 'tool-io';
+  inputBlock.innerHTML = `<strong>Input</strong>\n${escapeHtml(JSON.stringify(call.input ?? {}, null, 2))}`;
+  el.append(inputBlock);
+
+  const outputBlock = document.createElement('pre');
+  outputBlock.className = 'tool-io';
+  outputBlock.dataset.role = 'output';
+  outputBlock.innerHTML = `<strong>Output</strong>\n${escapeHtml(call.result?.content ?? '(pending)')}`;
+  el.append(outputBlock);
+
+  return el;
+}
+
+function hideWelcomeCard() {
+  if (welcomeCard && !welcomeCard.hidden) welcomeCard.hidden = true;
+}
+
+function renderTurns(turns) {
+  // Clear existing messages but keep the welcome card placeholder.
+  for (const node of [...messageStream.children]) {
+    if (node !== welcomeCard) node.remove();
+  }
+  if (turns.length === 0) {
+    if (welcomeCard) welcomeCard.hidden = false;
+    return;
+  }
+  hideWelcomeCard();
+
+  for (const turn of turns) {
+    messageStream.appendChild(buildUserBubble(turn.user));
+    const assistantBubble = buildAssistantBubble(turn.assistant ?? '');
+    if (turn.toolCalls?.length) {
+      const toolList = assistantBubble.querySelector('[data-role="tool-list"]');
+      for (const call of turn.toolCalls) toolList.appendChild(buildToolCallElement(call));
+    }
+    messageStream.appendChild(assistantBubble);
+  }
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  const nearBottom = messageStream.scrollHeight - messageStream.scrollTop - messageStream.clientHeight < 100;
+  if (nearBottom) messageStream.scrollTop = messageStream.scrollHeight;
+}
+
+// ---------- SSE parsing ----------
+
+function parseSseEvent(raw) {
+  const lines = raw.split('\n');
+  let eventType = 'message';
+  const dataLines = [];
+  for (const line of lines) {
+    if (line.startsWith('event:')) eventType = line.slice(6).trim();
+    else if (line.startsWith('data:')) dataLines.push(line.slice(5).trim());
+  }
+  if (!dataLines.length) return null;
+  try { return { type: eventType, data: JSON.parse(dataLines.join('\n')) }; }
+  catch { return null; }
+}
+
+// ---------- Streaming ----------
+
+async function streamTurn(sessionId, prompt) {
+  hideWelcomeCard();
+  messageStream.appendChild(buildUserBubble(prompt));
+  const assistantBubble = buildAssistantBubble('');
+  messageStream.appendChild(assistantBubble);
+  scrollToBottom();
+
+  const assistantText = assistantBubble.querySelector('[data-role="assistant-text"]');
+  const toolList = assistantBubble.querySelector('[data-role="tool-list"]');
+  let buffer = '';
+  const toolElementsByCallId = new Map();
+
+  const controller = new AbortController();
+  activeStreamAbort = () => controller.abort();
+
+  const approvalToken = getApprovalToken();
+  const csrf = await api('GET', '/auth/csrf').catch(() => null);
+  const csrfHeader = csrf?.csrfToken;
+
+  const response = await fetch('/api/chat/stream', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'content-type': 'application/json',
+      ...(csrfHeader ? { 'x-brownstone-csrf': csrfHeader } : {}),
+      ...(approvalToken ? { 'x-brownstone-approval': approvalToken } : {}),
+    },
+    body: JSON.stringify({ sessionId, prompt, thinkingMode: getThinkingMode() }),
+    signal: controller.signal,
+  });
+
+  if (!response.ok || !response.body) {
+    const text = await response.text().catch(() => '');
+    assistantText.innerHTML = renderMarkdown(`**Error:** ${text || response.statusText}`);
+    activeStreamAbort = null;
+    return;
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let sseBuffer = '';
+
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      sseBuffer += decoder.decode(value, { stream: true });
+      let separatorIndex;
+      while ((separatorIndex = sseBuffer.indexOf('\n\n')) !== -1) {
+        const raw = sseBuffer.slice(0, separatorIndex);
+        sseBuffer = sseBuffer.slice(separatorIndex + 2);
+        const event = parseSseEvent(raw);
+        if (!event) continue;
+        const data = event.data;
+        switch (event.type) {
+          case 'text_delta':
+            buffer += data.text;
+            assistantText.innerHTML = renderMarkdown(buffer);
+            break;
+          case 'tool_call_start': {
+            const el = buildToolCallElement({ id: data.callId, toolName: data.toolName, input: data.input });
+            toolList.appendChild(el);
+            toolElementsByCallId.set(data.callId, el);
+            break;
+          }
+          case 'tool_call_end': {
+            const el = toolElementsByCallId.get(data.callId);
+            if (!el) break;
+            el.dataset.status = data.ok ? 'ok' : 'failed';
+            el.querySelector('.tool-indicator').textContent = data.ok ? '✓' : '✗';
+            el.querySelector('[data-role="duration"]').textContent = ` ${data.durationMs}ms`;
+            el.querySelector('[data-role="output"]').innerHTML = `<strong>Output</strong>\n${escapeHtml(data.output)}`;
+            break;
+          }
+          case 'error':
+            assistantText.innerHTML += `<p class="md-p"><em>Error: ${escapeHtml(data.message)}</em></p>`;
+            break;
+          default:
+            break;
+        }
+        scrollToBottom();
+      }
+    }
+  } catch (error) {
+    if (error.name !== 'AbortError') {
+      assistantText.innerHTML += `<p class="md-p"><em>Stream interrupted: ${escapeHtml(error.message)}</em></p>`;
+    }
+  } finally {
+    activeStreamAbort = null;
+  }
+}
+
+// ---------- Session list ----------
+
+async function refreshSessions() {
+  const sessions = await api('GET', '/sessions');
+  sessionSelect.replaceChildren();
+  for (const session of sessions) {
+    const option = document.createElement('option');
+    option.value = session.id;
+    const label = session.title || `Session ${session.id.slice(0, 8)}`;
+    option.textContent = `${label} · ${new Date(session.updatedAt).toLocaleTimeString()}`;
+    sessionSelect.appendChild(option);
+  }
+  if (sessions.length && !activeSessionId) {
+    activeSessionId = sessions[0].id;
+    sessionSelect.value = activeSessionId;
+    await loadAndRender(activeSessionId);
+  } else if (activeSessionId) {
+    sessionSelect.value = activeSessionId;
+  } else {
+    renderTurns([]);
+  }
+}
+
+async function loadAndRender(id) {
+  const session = await api('GET', `/sessions/${encodeURIComponent(id)}`);
+  activeSessionId = id;
+  renderTurns(session.turns ?? []);
+}
+
+// ---------- Init ----------
+
+function init(opts) {
+  messageStream = opts.messageStream;
+  chatInput = opts.input;
+  sendButton = opts.sendButton;
+  sessionSelect = opts.sessionSelect;
+  newSessionButton = opts.newSessionButton;
+  welcomeCard = opts.welcomeCard;
+
+  sessionSelect.addEventListener('change', (event) => {
+    if (activeStreamAbort) activeStreamAbort();
+    loadAndRender(event.target.value).catch((error) => console.error('Load session failed:', error));
+  });
+
+  newSessionButton.addEventListener('click', async () => {
+    if (activeStreamAbort) activeStreamAbort();
+    const session = await api('POST', '/sessions', { body: {} });
+    activeSessionId = session.id;
+    await refreshSessions();
+    renderTurns([]);
+    chatInput.focus();
+  });
+
+  sendButton.addEventListener('click', () => triggerSend());
+  chatInput.addEventListener('keydown', (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+      event.preventDefault();
+      triggerSend();
+    }
+  });
+}
+
+async function triggerSend() {
+  const prompt = chatInput.value.trim();
+  if (!prompt) return;
+  if (!activeSessionId) {
+    // Create a session lazily for first-time users.
+    const session = await api('POST', '/sessions', { body: {} });
+    activeSessionId = session.id;
+    await refreshSessions();
+  }
+  chatInput.disabled = true;
+  sendButton.disabled = true;
+  try {
+    await streamTurn(activeSessionId, prompt);
+    chatInput.value = '';
+  } catch (error) {
+    console.error('Stream failed:', error);
+  } finally {
+    chatInput.disabled = false;
+    sendButton.disabled = false;
+    chatInput.focus();
+  }
+}
+
+
+window.__demoRegistry.chat = { setThinkingModeProvider, refreshSessions, init };
+})();
+
+
+;(function(){
+/**
+ * Top-level wiring for the Brownstone UI.
+ *
+ * Layout follows the original three-panel design (chat → dashboard → preview).
+ * Backend wiring uses the Pass 2 modules:
+ *   - api.js        : fetch wrapper, CSRF, 401 handling
+ *   - auth.js       : login overlay, session bootstrap
+ *   - approval.js   : per-action approval token
+ *   - chat.js       : streaming chat with tool-call rendering
+ *   - markdown.js   : safe markdown renderer for assistant text
+ *
+ * This file owns:
+ *   - Auth state binding (showing/hiding the overlay + user pill)
+ *   - Thinking-mode select
+ *   - Suggestion pills (generic, no brand mentions)
+ *   - Dashboard refresh (health, schedules, exports, uploads, file tree, telemetry)
+ *   - Preview tab switching
+ *   - Approval token bar wiring
+ *   - The thin "send" pipeline that hands prompts to chat.js
+ */
+
+const { api, configureClient } = window.__demoRegistry.api;
+const approval = window.__demoRegistry.approval;
+const auth = window.__demoRegistry.auth;
+const chat = window.__demoRegistry.chat;
+const { renderMarkdown } = window.__demoRegistry.markdown;
+
+// ---------- DOM lookup ----------
+const elements = {
+  // Header
+  healthPill: document.getElementById('health-pill'),
+  modePill: document.getElementById('mode-pill'),
+  userPill: document.getElementById('user-pill'),
+  logoutButton: document.getElementById('logout-button'),
+  thinkingMode: document.getElementById('thinking-mode'),
+
+  // Chat panel
+  modeStrip: document.getElementById('mode-strip'),
+  templateGrid: document.getElementById('template-grid'),
+  messageStream: document.getElementById('message-stream'),
+  welcomeCard: document.getElementById('welcome-card'),
+  chatInput: document.getElementById('chat-input'),
+  sendButton: document.getElementById('send-button'),
+  sessionSelect: document.getElementById('session-select'),
+  newSessionButton: document.getElementById('new-session-button'),
+  suggestions: document.getElementById('suggestions'),
+  uploadInput: document.getElementById('upload-input'),
+  uploadButton: document.getElementById('upload-button'),
+  scheduleButton: document.getElementById('schedule-button'),
+  exportButton: document.getElementById('export-button'),
+
+  // Dashboard panel
+  refreshButton: document.getElementById('refresh-button'),
+  statusGrid: document.getElementById('status-grid'),
+  safeDefaults: document.getElementById('safe-defaults'),
+  fileTree: document.getElementById('file-tree'),
+  sourceList: document.getElementById('source-list'),
+  uploadsList: document.getElementById('uploads-list'),
+  scheduleList: document.getElementById('schedule-list'),
+  exportsList: document.getElementById('exports-list'),
+  activityFeed: document.getElementById('activity-feed'),
+
+  // Preview panel
+  previewStack: document.getElementById('preview-stack'),
+  textPreview: document.getElementById('text-preview'),
+  previewEmpty: document.getElementById('preview-empty'),
+
+  // Login overlay
+  authOverlay: document.getElementById('auth-overlay'),
+
+  // Approval bar
+  approvalToken: document.getElementById('approval-token'),
+  approvalClear: document.getElementById('approval-clear'),
+};
+
+// ---------- State ----------
+const state = {
+  thinkingMode: 'balanced',
+};
+
+// ---------- Suggestion pills ----------
+// Generic, brand-neutral starters that work for any project.
+const DEFAULT_SUGGESTIONS = [
+  'Summarize the files in my workspace and tell me what to focus on.',
+  'Help me draft a README for this project.',
+  'Search the web for recent best practices on prompt engineering.',
+  'Use git_status to show me what has changed.',
+];
+
+function renderSuggestionPills(prompts) {
+  elements.suggestions.innerHTML = '';
+  for (const prompt of prompts) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'suggestion-pill ghost-button';
+    button.textContent = prompt;
+    button.addEventListener('click', () => {
+      elements.chatInput.value = prompt;
+      elements.chatInput.focus();
+    });
+    elements.suggestions.appendChild(button);
+  }
+}
+
+// ---------- Auth state binding ----------
+function bindAuthState(user) {
+  if (user) {
+    elements.authOverlay.hidden = true;
+    elements.userPill.hidden = false;
+    elements.userPill.textContent = `${user.displayName || user.email} · ${user.role}`;
+    elements.logoutButton.hidden = false;
+  } else {
+    elements.authOverlay.hidden = false;
+    elements.userPill.hidden = true;
+    elements.logoutButton.hidden = true;
+  }
+}
+
+// ---------- Dashboard refresh ----------
+async function refreshHealth() {
+  try {
+    const health = await api('GET', '/health');
+    elements.healthPill.textContent = health.ok ? 'Connected' : 'Degraded';
+    elements.modePill.textContent = `${health.mode} · ${health.providerMode}`;
+  } catch {
+    elements.healthPill.textContent = 'Offline';
+    elements.modePill.textContent = 'Mode unknown';
+  }
+}
+
+function renderSafeDefaults(health) {
+  const items = [
+    { label: 'Permission mode', value: health?.mode ?? '—' },
+    { label: 'Provider', value: health?.providerMode ?? '—' },
+    { label: 'Approval required (writes)', value: health?.approvalRequired ? 'On' : 'Off' },
+    { label: 'External-action approval', value: health?.externalApprovalRequired ? 'On' : 'Off' },
+  ];
+  elements.safeDefaults.innerHTML = items
+    .map((item) => `<div class="safety-item"><span>${item.label}</span><strong>${escapeHtml(String(item.value))}</strong></div>`)
+    .join('');
+}
+
+async function refreshDashboard() {
+  // The dashboard reads from several endpoints. Each is wrapped so one
+  // failure doesn't blank the rest. Empty states are shown as placeholders.
+  const [health, schedules, exports, uploads, fileTree, telemetry] = await Promise.all([
+    api('GET', '/health').catch(() => null),
+    api('GET', '/schedules').catch(() => []),
+    api('GET', '/exports').catch(() => []),
+    api('GET', '/uploads').catch(() => []),
+    api('GET', '/workspace/tree').catch(() => ({ entries: [] })),
+    api('GET', '/telemetry').catch(() => []),
+  ]);
+
+  renderSafeDefaults(health);
+  renderFileTree(fileTree?.entries ?? []);
+  renderSimpleList(elements.scheduleList, schedules, (s) => `${s.prompt?.slice(0, 60) ?? s.id} <span class="small-pill">${s.cadence ?? ''}</span>`);
+  renderSimpleList(elements.exportsList, exports, (e) => `${e.title ?? e.id}`);
+  renderSimpleList(elements.uploadsList, uploads, (u) => `${u.filename ?? u.id} <span class="small-pill">${(u.bytes ?? 0)} B</span>`);
+  renderActivity(telemetry);
+  renderStatusGrid(health);
+}
+
+function renderStatusGrid(health) {
+  if (!health) {
+    elements.statusGrid.innerHTML = '';
+    return;
+  }
+  const cards = [
+    { title: 'Status', value: health.ok ? 'Connected' : 'Degraded', tone: health.ok ? 'success' : 'warning' },
+    { title: 'Mode', value: health.mode, tone: 'neutral' },
+    { title: 'Provider', value: health.providerMode, tone: 'neutral' },
+  ];
+  elements.statusGrid.innerHTML = cards
+    .map((c) => `
+      <div class="status-card status-${c.tone}">
+        <span class="small-pill">${c.title}</span>
+        <strong>${escapeHtml(c.value ?? '—')}</strong>
+      </div>
+    `)
+    .join('');
+}
+
+function renderFileTree(entries) {
+  if (!entries.length) {
+    elements.fileTree.innerHTML = '<div class="empty-state">Workspace is empty.</div>';
+    return;
+  }
+  function nodeHtml(entry, depth = 0) {
+    const pad = `style="padding-left: ${depth * 14}px"`;
+    if (entry.type === 'dir') {
+      const children = (entry.children ?? []).map((c) => nodeHtml(c, depth + 1)).join('');
+      return `<div class="file-node" ${pad}><strong>📁 ${escapeHtml(entry.name)}</strong></div>${children}`;
+    }
+    return `<div class="file-node" ${pad}>📄 ${escapeHtml(entry.name)}</div>`;
+  }
+  elements.fileTree.innerHTML = entries.map((e) => nodeHtml(e)).join('');
+}
+
+function renderSimpleList(target, items, renderFn) {
+  if (!items?.length) {
+    target.innerHTML = '<div class="empty-state">None yet.</div>';
+    return;
+  }
+  target.innerHTML = items.map((item) => `<div class="file-node">${renderFn(item)}</div>`).join('');
+}
+
+function renderActivity(events) {
+  if (!events?.length) {
+    elements.activityFeed.innerHTML = '<div class="empty-state">No activity recorded yet.</div>';
+    return;
+  }
+  elements.activityFeed.innerHTML = events
+    .slice(-20)
+    .reverse()
+    .map((event) => `
+      <div class="activity-item">
+        <span class="small-pill">${escapeHtml(event.kind ?? 'event')}</span>
+        <span>${escapeHtml(event.message ?? JSON.stringify(event.payload ?? {}))}</span>
+        <span class="muted">${event.timestamp ?? ''}</span>
+      </div>
+    `)
+    .join('');
+}
+
+// ---------- Preview tabs ----------
+function bindPreviewTabs() {
+  const buttons = document.querySelectorAll('.preview-panel .tab-button');
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      const tab = button.dataset.tab;
+      for (const b of buttons) b.classList.toggle('active', b === button);
+      for (const surface of document.querySelectorAll('.preview-surface')) {
+        surface.classList.toggle('active', surface.dataset.surface === tab);
+      }
+    });
+  }
+}
+
+// ---------- Approval bar ----------
+function bindApprovalBar() {
+  elements.approvalToken.value = approval.getApprovalToken() ?? '';
+  elements.approvalToken.addEventListener('input', () => {
+    approval.setApprovalToken(elements.approvalToken.value.trim() || null);
+  });
+  elements.approvalClear.addEventListener('click', () => {
+    elements.approvalToken.value = '';
+    approval.setApprovalToken(null);
+  });
+}
+
+// ---------- Thinking mode ----------
+function bindThinkingMode() {
+  elements.thinkingMode.addEventListener('change', () => {
+    state.thinkingMode = elements.thinkingMode.value;
+    // The mode is passed through to chat.js via a getter so its streaming
+    // pipeline picks up the current selection at send time.
+    chat.setThinkingModeProvider(() => state.thinkingMode);
+  });
+  chat.setThinkingModeProvider(() => state.thinkingMode);
+}
+
+// ---------- Misc ----------
+function escapeHtml(text) {
+  return String(text ?? '').replace(/[&<>]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[ch]);
+}
+
+// ---------- Boot ----------
+async function start() {
+  approval.init();
+  auth.init();
+  configureClient({ onUnauthorized: () => auth.bootstrap() });
+
+  let initialized = false;
+  auth.onAuthChange(async (user) => {
+    bindAuthState(user);
+    if (user) {
+      if (!initialized) {
+        // Chat module wires the message stream, send button, session list,
+        // composer keyboard shortcuts. Runs exactly once on first login.
+        chat.init({
+          messageStream: elements.messageStream,
+          input: elements.chatInput,
+          sendButton: elements.sendButton,
+          sessionSelect: elements.sessionSelect,
+          newSessionButton: elements.newSessionButton,
+          welcomeCard: elements.welcomeCard,
+        });
+        bindThinkingMode();
+        bindPreviewTabs();
+        bindApprovalBar();
+        renderSuggestionPills(DEFAULT_SUGGESTIONS);
+        elements.refreshButton.addEventListener('click', () => refreshDashboard().catch(console.error));
+        initialized = true;
+      }
+      await Promise.all([refreshHealth(), refreshDashboard(), chat.refreshSessions()]).catch(console.error);
+    }
+  });
+
+  await auth.bootstrap();
+}
+
+start().catch((error) => console.error('App start failed:', error));
+
+
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "name": "@brownstone/app-control-plane",
+  "version": "0.5.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node --env-file=.env dist/index.js",
+    "dev": "tsx watch --env-file=.env src/index.ts"
+  },
+  "dependencies": {
+    "@brownstone/auth": "workspace:*",
+    "@brownstone/browser-automation": "workspace:*",
+    "@brownstone/config": "workspace:*",
+    "@brownstone/contracts": "workspace:*",
+    "@brownstone/errors": "workspace:*",
+    "@brownstone/git-tools": "workspace:*",
+    "@brownstone/http-kit": "workspace:*",
+    "@brownstone/memory": "workspace:*",
+    "@brownstone/operations": "workspace:*",
+    "@brownstone/patching": "workspace:*",
+    "@brownstone/providers-openai": "workspace:*",
+    "@brownstone/research": "workspace:*",
+    "@brownstone/runtime": "workspace:*",
+    "@brownstone/security": "workspace:*",
+    "@brownstone/session-store": "workspace:*",
+    "@brownstone/storage": "workspace:*",
+    "@brownstone/task-executor": "workspace:*",
+    "@brownstone/task-queue": "workspace:*",
+    "@brownstone/telemetry": "workspace:*",
+    "@brownstone/web-search": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.19.0"
+  }
+}

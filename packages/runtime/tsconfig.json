@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "outDir": "dist", "rootDir": "src", "lib": ["ES2022"] },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../contracts" },
+    { "path": "../errors" },
+    { "path": "../git-tools" },
+    { "path": "../security" },
+    { "path": "../session-store" },
+    { "path": "../telemetry" },
+    { "path": "../web-search" }
+  ]
+}

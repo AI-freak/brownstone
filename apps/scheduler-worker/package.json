@@ -1,0 +1,21 @@
+{
+  "name": "@brownstone/app-scheduler-worker",
+  "version": "0.5.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node --env-file=.env dist/index.js"
+  },
+  "dependencies": {
+    "@brownstone/config": "workspace:*",
+    "@brownstone/contracts": "workspace:*",
+    "@brownstone/operations": "workspace:*",
+    "@brownstone/providers-openai": "workspace:*",
+    "@brownstone/research": "workspace:*",
+    "@brownstone/web-search": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0"
+  }
+}

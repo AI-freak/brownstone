@@ -1,0 +1,30 @@
+{
+  "name": "brownstone",
+  "version": "0.5.0",
+  "private": true,
+  "description": "A local-first AI agent workspace. Talk to an agent that reads your files, runs tools, browses the web, and asks for approval before destructive actions.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "start:control-plane": "npm --workspace @brownstone/app-control-plane run start",
+    "start:browser-worker": "npm --workspace @brownstone/app-browser-worker run start",
+    "start:task-worker": "npm --workspace @brownstone/app-task-worker run start",
+    "start:scheduler": "npm --workspace @brownstone/app-scheduler-worker run start",
+    "start:web": "npm --workspace @brownstone/app-web run start",
+    "dev": "concurrently -k -n cp,bw,tw,sch,web \"npm:start:control-plane\" \"npm:start:browser-worker\" \"npm:start:task-worker\" \"npm:start:scheduler\" \"npm:start:web\"",
+    "test": "node --import tsx --test packages/*/test/*.test.ts apps/*/test/*.test.ts",
+    "test:packages": "node --import tsx --test packages/*/test/*.test.ts",
+    "test:integration": "node --import tsx --test apps/*/test/*.test.ts"
+  },
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "typescript": "^5.5.4",
+    "tsx": "^4.19.0"
+  }
+}

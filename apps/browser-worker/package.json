@@ -1,0 +1,23 @@
+{
+  "name": "@brownstone/app-browser-worker",
+  "version": "0.5.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node --env-file=.env dist/index.js",
+    "dev": "tsx watch --env-file=.env src/index.ts"
+  },
+  "dependencies": {
+    "@brownstone/browser-automation": "workspace:*",
+    "@brownstone/config": "workspace:*",
+    "@brownstone/contracts": "workspace:*",
+    "@brownstone/errors": "workspace:*",
+    "@brownstone/http-kit": "workspace:*",
+    "@brownstone/security": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "@types/node": "^20.11.0"
+  }
+}

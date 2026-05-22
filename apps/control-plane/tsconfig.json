@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "outDir": "dist", "rootDir": "src", "lib": ["ES2022"] },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../../packages/auth" },
+    { "path": "../../packages/browser-automation" },
+    { "path": "../../packages/config" },
+    { "path": "../../packages/contracts" },
+    { "path": "../../packages/errors" },
+    { "path": "../../packages/git-tools" },
+    { "path": "../../packages/http-kit" },
+    { "path": "../../packages/memory" },
+    { "path": "../../packages/operations" },
+    { "path": "../../packages/patching" },
+    { "path": "../../packages/providers-openai" },
+    { "path": "../../packages/research" },
+    { "path": "../../packages/runtime" },
+    { "path": "../../packages/security" },
+    { "path": "../../packages/session-store" },
+    { "path": "../../packages/storage" },
+    { "path": "../../packages/task-executor" },
+    { "path": "../../packages/task-queue" },
+    { "path": "../../packages/telemetry" },
+    { "path": "../../packages/web-search" }
+  ]
+}

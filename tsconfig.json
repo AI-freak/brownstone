@@ -1,0 +1,32 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/errors" },
+    { "path": "./packages/contracts" },
+    { "path": "./packages/storage" },
+    { "path": "./packages/config" },
+    { "path": "./packages/auth" },
+    { "path": "./packages/http-kit" },
+    { "path": "./packages/security" },
+    { "path": "./packages/providers-local-sim" },
+    { "path": "./packages/providers-openai" },
+    { "path": "./packages/session-store" },
+    { "path": "./packages/telemetry" },
+    { "path": "./packages/memory" },
+    { "path": "./packages/task-queue" },
+    { "path": "./packages/task-executor" },
+    { "path": "./packages/browser-automation" },
+    { "path": "./packages/git-tools" },
+    { "path": "./packages/patching" },
+    { "path": "./packages/web-search" },
+    { "path": "./packages/research" },
+    { "path": "./packages/operations" },
+    { "path": "./packages/runtime" },
+    { "path": "./apps/control-plane" },
+    { "path": "./apps/browser-worker" },
+    { "path": "./apps/task-worker" },
+    { "path": "./apps/scheduler-worker" },
+    { "path": "./apps/web" },
+    { "path": "./apps/vscode-extension" }
+  ]
+}

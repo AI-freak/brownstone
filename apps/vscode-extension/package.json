@@ -1,0 +1,41 @@
+{
+  "name": "@brownstone/app-vscode-extension",
+  "version": "0.5.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/extension.js",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "activationEvents": [
+    "onCommand:safeAgent.openChat",
+    "onCommand:safeAgent.openDashboard"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "safeAgent.openChat",
+        "title": "Brownstone: Open Chat"
+      },
+      {
+        "command": "safeAgent.openDashboard",
+        "title": "Brownstone: Open Dashboard"
+      },
+      {
+        "command": "safeAgent.refreshDashboard",
+        "title": "Brownstone: Refresh Dashboard"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@brownstone/config": "workspace:*",
+    "@brownstone/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.11.0"
+  }
+}

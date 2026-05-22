@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "outDir": "dist", "rootDir": "src", "lib": ["ES2022"] },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../contracts" },
+    { "path": "../errors" },
+    { "path": "../storage" },
+    { "path": "../task-queue" },
+    { "path": "../telemetry" },
+    { "path": "../browser-automation" },
+    { "path": "../web-search" }
+  ]
+}

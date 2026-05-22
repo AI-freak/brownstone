@@ -1,0 +1,28 @@
+{
+  "name": "@brownstone/task-executor",
+  "version": "0.5.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@brownstone/contracts": "workspace:*",
+    "@brownstone/errors": "workspace:*",
+    "@brownstone/storage": "workspace:*",
+    "@brownstone/task-queue": "workspace:*",
+    "@brownstone/telemetry": "workspace:*",
+    "@brownstone/browser-automation": "workspace:*",
+    "@brownstone/web-search": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

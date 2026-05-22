@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Brownstone</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+
+    <!-- Login overlay: matches the glass aesthetic, sits over the workspace
+         until the user is authenticated. Closes the multi-user gap without
+         imposing a separate visual style. -->
+    <div class="auth-overlay" id="auth-overlay" hidden>
+      <div class="glass auth-card">
+        <p class="eyebrow">Brownstone</p>
+        <h2>Sign in to continue</h2>
+        <p class="auth-hint">First time here? Click <strong>Create account</strong> to make a local account — anyone can sign up and the first user becomes admin.</p>
+        <div class="auth-tabs">
+          <button class="tab-button active" data-tab="login" type="button">Log in</button>
+          <button class="tab-button" data-tab="register" type="button">Create account</button>
+        </div>
+        <form id="login-form" class="auth-form">
+          <label class="field-label" for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" autocomplete="email" required />
+          <label class="field-label" for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+          <div class="auth-error" data-role="error"></div>
+          <button class="primary-button" type="submit">Log in</button>
+        </form>
+        <form id="register-form" class="auth-form" hidden>
+          <label class="field-label" for="register-email">Email</label>
+          <input id="register-email" name="email" type="email" autocomplete="email" required />
+          <label class="field-label" for="register-name">Display name</label>
+          <input id="register-name" name="displayName" type="text" autocomplete="name" />
+          <label class="field-label" for="register-password">Password (8+ chars)</label>
+          <input id="register-password" name="password" type="password" autocomplete="new-password" minlength="8" required />
+          <div class="auth-error" data-role="error"></div>
+          <button class="primary-button" type="submit">Create account</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="app-shell">
+      <header class="topbar glass">
+        <div>
+          <p class="eyebrow">Brownstone</p>
+          <h1>Prompt-first workspace for non-coders</h1>
+        </div>
+        <div class="topbar-meta">
+          <label class="mode-select-wrap">
+            <span class="small-pill">Thinking depth</span>
+            <select id="thinking-mode" class="mode-select">
+              <option value="quick">Quick</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="deep">Deep</option>
+            </select>
+          </label>
+          <span class="pill" id="health-pill">Loading…</span>
+          <span class="pill" id="mode-pill">Checking mode…</span>
+          <span class="pill user-pill" id="user-pill" hidden>—</span>
+          <button class="ghost-button" id="logout-button" type="button" hidden>Log out</button>
+        </div>
+      </header>
+
+      <main class="workspace-layout">
+        <!-- Panel 1: Chat / Composer -->
+        <section class="panel glass chat-panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Conversation</p>
+              <h2>Tell me what you want</h2>
+            </div>
+            <div class="header-controls">
+              <select id="session-select" class="mode-select" aria-label="Active session"></select>
+              <button class="ghost-button" id="new-session-button" type="button">New chat</button>
+            </div>
+          </div>
+
+          <div class="mode-strip" id="mode-strip"></div>
+
+          <div class="template-grid" id="template-grid"></div>
+
+          <div class="message-stream" id="message-stream">
+            <div class="welcome-card" id="welcome-card">
+              <p class="panel-eyebrow">Welcome</p>
+              <p>Hi. Tell me what you want in plain language. I'll guide you, ask follow-up questions when needed, and show you the result before anything changes. Try the prompt pills below, or type your own.</p>
+            </div>
+          </div>
+
+          <div class="composer glass">
+            <textarea id="chat-input" placeholder="Describe what you want in plain language. Example: review my project folder and tell me what to clean up."></textarea>
+            <div class="composer-footer composer-extended">
+              <div class="composer-tools">
+                <div class="suggestions" id="suggestions"></div>
+                <div class="inline-tools">
+                  <input id="upload-input" type="file" accept=".txt,.md,.csv,.json,.html,.css,.js" hidden />
+                  <button class="ghost-button" id="upload-button" type="button">Upload file</button>
+                  <button class="ghost-button" id="schedule-button" type="button">Schedule current prompt</button>
+                  <button class="ghost-button" id="export-button" type="button">Export session</button>
+                </div>
+              </div>
+              <button class="primary-button" id="send-button" type="button">Send</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel 2: Dashboard -->
+        <section class="panel glass dashboard-panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Project dashboard</p>
+              <h2>What the agent is doing</h2>
+            </div>
+            <button class="ghost-button" id="refresh-button" type="button">Refresh</button>
+          </div>
+
+          <div class="status-grid" id="status-grid"></div>
+
+          <div class="subgrid subgrid-extended">
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Safer defaults</h3>
+                <span class="small-pill">Default protection</span>
+              </div>
+              <div class="safety-list" id="safe-defaults"></div>
+            </div>
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Files and outputs</h3>
+                <span class="small-pill">Workspace</span>
+              </div>
+              <div class="file-tree" id="file-tree"></div>
+            </div>
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Sources</h3>
+                <span class="small-pill">Research cards</span>
+              </div>
+              <div class="card-list" id="source-list"></div>
+            </div>
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Uploads</h3>
+                <span class="small-pill">Retrieval</span>
+              </div>
+              <div class="card-list" id="uploads-list"></div>
+            </div>
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Schedules</h3>
+                <span class="small-pill">Automation</span>
+              </div>
+              <div class="card-list" id="schedule-list"></div>
+            </div>
+            <div class="glass inset-card">
+              <div class="section-title-row">
+                <h3>Exports</h3>
+                <span class="small-pill">Artifacts</span>
+              </div>
+              <div class="card-list" id="exports-list"></div>
+            </div>
+          </div>
+
+          <div class="glass inset-card activity-card">
+            <div class="section-title-row">
+              <h3>Activity history</h3>
+              <span class="small-pill">Live workspace events</span>
+            </div>
+            <div class="activity-feed" id="activity-feed"></div>
+          </div>
+        </section>
+
+        <!-- Panel 3: Preview / Approvals -->
+        <section class="panel glass preview-panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-eyebrow">Preview and approvals</p>
+              <h2>See the result before it changes</h2>
+            </div>
+            <div class="tab-row">
+              <button class="tab-button active" data-tab="preview" type="button">Preview</button>
+              <button class="tab-button" data-tab="approval" type="button">Before / after</button>
+              <button class="tab-button" data-tab="sources" type="button">Sources</button>
+              <button class="tab-button" data-tab="memory" type="button">History</button>
+            </div>
+          </div>
+
+          <div class="preview-stack" id="preview-stack">
+            <div class="glass inset-card preview-surface active" data-surface="preview">
+              <div class="preview-empty" id="preview-empty">
+                <h3>Ready when you are</h3>
+                <p>Your page preview, research answer, summary output, file content, or screenshot notes will appear here.</p>
+              </div>
+              <iframe id="web-preview-frame" hidden></iframe>
+              <pre id="text-preview" hidden></pre>
+            </div>
+
+            <div class="glass inset-card preview-surface" data-surface="approval">
+              <div id="approval-empty" class="preview-empty">
+                <h3>No approval waiting</h3>
+                <p>When a file change needs your approval, you will see the before and after view here.</p>
+              </div>
+              <div class="approval-body" id="approval-body" hidden>
+                <div class="approval-summary">
+                  <div>
+                    <p class="panel-eyebrow">Approval required</p>
+                    <h3 id="approval-title"></h3>
+                    <p id="approval-summary-text"></p>
+                  </div>
+                  <span class="small-pill" id="approval-risk"></span>
+                </div>
+                <div class="before-after-grid">
+                  <div>
+                    <h4>Before</h4>
+                    <pre id="approval-before"></pre>
+                  </div>
+                  <div>
+                    <h4>After</h4>
+                    <pre id="approval-after"></pre>
+                  </div>
+                </div>
+                <div class="comment-wrap">
+                  <label class="field-label" for="approval-note">Comment for approval log</label>
+                  <textarea id="approval-note" rows="2" placeholder="Optional note for collaborators or your own history."></textarea>
+                </div>
+                <div class="approval-actions">
+                  <button class="secondary-button" id="reject-button" type="button">Reject</button>
+                  <button class="ghost-button" id="edit-request-button" type="button">Edit request</button>
+                  <button class="primary-button" id="approve-button" type="button">Approve</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass inset-card preview-surface" data-surface="sources">
+              <div class="card-list" id="source-surface"></div>
+            </div>
+
+            <div class="glass inset-card preview-surface" data-surface="memory">
+              <div class="memory-list" id="memory-list"></div>
+              <div class="comments-panel">
+                <div class="section-title-row">
+                  <h3>Collaboration comments</h3>
+                  <span class="small-pill">Shared context</span>
+                </div>
+                <div class="card-list" id="comments-list"></div>
+                <div class="inline-comment-form">
+                  <input id="comment-author" type="text" placeholder="Your name" />
+                  <textarea id="comment-input" rows="2" placeholder="Add a note to the current session or approval target."></textarea>
+                  <button class="ghost-button" id="comment-button" type="button">Add comment</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Approval token bar at the bottom; mirrors the original's affordance -->
+    <div class="approval-bar glass" id="approval-bar">
+      <span class="small-pill">Approval token</span>
+      <input id="approval-token" type="password" placeholder="Paste the operator-supplied approval token to enable writes" autocomplete="off" />
+      <button class="ghost-button" id="approval-clear" type="button">Clear</button>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
